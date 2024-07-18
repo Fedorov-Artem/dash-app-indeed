@@ -54,8 +54,6 @@ def generate_bar_chart(df_sel):
         else:
             print(skill + '!!!')
 
-    #skill_count = sorted(skill_count, key=lambda x: x[1], reverse=True)[:15]
-
     df_skill = pd.DataFrame(skill_count, columns=['skill', 'count', 'mandatory'])
     df_skill['total'] = df_skill.groupby('skill')['count'].transform('sum')
     df_skill = df_skill.sort_values('total', ascending=False)[:30]
