@@ -63,9 +63,12 @@ def generate_bar_chart(df_sel):
                  x='count',
                  y='skill',
                  color='mandatory',
+                 category_orders={"mandatory": ["mandatory", "advantage"],
+                                  #"smoker": ["Yes", "No"],
+                                  #"sex": ["Male", "Female"]
+                                  },
                  #orientation='h',
                  #custom_data=[color_col, 'size'],
-                 #color_discrete_sequence=["seagreen", "mediumvioletred", "gold", 'DarkSlateBlue'],
                  )
     fig.update_layout(
         title='Top 15 skills',
@@ -227,7 +230,7 @@ def filter_df(job_type, all_types):
     selected_jobs_string = "Vacancies Selected: {:,d}".format(
         len(df_selected) )
 
-    exp_text = f"average min experience {df_selected['min_experience'].mean()} years"
+    exp_text = f"average min experience {df_selected['min_experience'].mean():.2f} years"
 
     return selected_jobs_string, fig_bar, fig_line, fig_pie_cloud, exp_text
 
