@@ -104,21 +104,21 @@ def generate_pie_cloud(df_sel):
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig
 
-def generate_pie_cloud(df_sel):
-    df_pie = df_sel.groupby('cloud_skills', as_index=False).agg({"url":"count"})
+def generate_pie_district(df_sel):
+    df_pie = df_sel.groupby('district', as_index=False).agg({"url":"count"})
     fig = px.pie(df_pie,
                  values='url',
-                 names='cloud_skills',
-                 title='Cloud Skills',
+                 names='district',
+                 title='Vacancies by District',
                  hole=.5
                  )
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig
 
-
 fig_bar = generate_bar_chart(df)
 fig_line = generate_line_chart(df)
-fig_pie_cloud = generate_pie_cloud(df)
+fig_pie_district = generate_pie_district(df)
+#fig_pie_cloud = generate_pie_cloud(df)
 
 # Layout of Dash App
 app.layout = html.Div(
@@ -181,7 +181,7 @@ app.layout = html.Div(
                             #className="row",
                             children=[
                                 dbc.Col([dcc.Graph(id="bar_chart", figure=fig_bar)], width=8),
-                                dbc.Col([dcc.Graph(id="pie_cloud", figure=fig_pie_cloud)], width=4),
+                                dbc.Col([dcc.Graph(id="pie_district", figure=fig_pie_district)], width=4),
                             ]),
                         dbc.Row(
                             #className="row",
@@ -203,7 +203,7 @@ app.layout = html.Div(
     Output("total-vacancies", "children"),
     Output("bar_chart", "figure"),
     Output("line_chart", "figure"),
-    Output("pie_cloud", "figure"),
+    Output("pie_district", "figure"),
     Output("exp-text", "children"),
     [
         Input("job-type", "value"),
@@ -222,7 +222,7 @@ def filter_df(job_type, all_types):
 
     fig_bar = generate_bar_chart(df_selected)
     fig_line = generate_line_chart(df_selected)
-    fig_pie_cloud = generate_pie_cloud(df_selected)
+    fig_pie_cloud = generate_pie_district(df_selected)
 
     selected_jobs_string = "Vacancies Selected: {:,d}".format(
         len(df_selected) )
