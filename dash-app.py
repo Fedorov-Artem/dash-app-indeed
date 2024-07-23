@@ -34,16 +34,18 @@ df = pd.read_csv('to_analysis_indeed.csv')
 
 all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
                      {"label": "Data Analyst Jobs", "value": "type_da"},
-                     {"label": "Data Engineer Jobs", "value": "type_de"},]
+                     {"label": "Data Engineer Jobs", "value": "type_de"},
+                     {"label": "Business Intelligence Jobs", "value": "type_bi"},
+                     {"label": "AI/ML Jobs", "value": "type_aiml"},]
 
 
 #def generate_bar_charts(df_all, df_sel):
 def generate_bar_chart(df_sel):
-    important_skills = ['AI', 'AWS', 'Apache Airflow', 'Apache Spark', 'Azure', 'Big Data', 'Business Analysis',
-                        'Business Intelligence', 'Cloud', 'Computer Vision', 'Data Pipelines', 'Data WareHousing', 'Deep Learning',
-                        'ETL', 'GCP', 'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI', 'Natural Language Processing', 'NoSQL',
-                        'Machine Learning', 'Pandas', 'SQL', 'Tableau', 'Programing Language', 'Python', 'Java', 'Scala', 'R']
-
+    important_skills = ['AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark', 'Azure', 'Big Data', 'Computer Vision',
+                        'Data Pipelines', 'Data Modeling', 'Data WareHousing', 'Deep Learning', 'Docker', 'ETL',
+                        'Financial Analysis', 'GCP', 'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI',
+                        'Natural Language Processing', 'NoSQL', 'Machine Learning', 'Pandas', 'PyTorch',
+                        'Snowflake', 'SQL', 'Tableau', 'TensorFlow', 'Programing Language', 'Python', 'Java', 'Scala', 'R']
     skill_count = []
     for skill in important_skills:
         if skill in df_sel:
@@ -79,10 +81,11 @@ def generate_bar_chart(df_sel):
     return fig
 
 def generate_line_chart(df_sel):
-    df_sel['first_online'] = pd.to_datetime(df_sel['first_online'])
-    df_sel['week_num'] = df_sel['first_online'].dt.isocalendar().week
-    df_dates = df_sel.groupby('week_num', as_index=False).agg({"url":"nunique"})
-    df_dates = df_dates.loc[df_dates['week_num'] > 3]
+    df_sel['first_online_est'] = pd.to_datetime(df_sel['first_online_est'])
+    df_sel['week_num'] = df_sel['first_online_est'].dt.isocalendar().week
+    df_dates = df_sel.loc[df_sel['first_online_est'] > '2024-01-14']
+    df_dates = df_dates.groupby('week_num', as_index=False).agg({"url":"nunique"})
+    #df_dates = df_dates.loc[df_dates['week_num'] > 3]
 
     fig = px.line(df_dates,
                   x="week_num",
