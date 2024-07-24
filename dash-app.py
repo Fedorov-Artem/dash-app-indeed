@@ -39,11 +39,10 @@ all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
                      {"label": "AI/ML Jobs", "value": "type_aiml"},]
 
 
-#def generate_bar_charts(df_all, df_sel):
 def generate_bar_chart(df_sel):
-    important_skills = ['AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark', 'Azure', 'Big Data', 'Computer Vision',
-                        'Data Pipelines', 'Data Modeling', 'Data WareHousing', 'Deep Learning', 'Docker', 'ETL',
-                        'Financial Analysis', 'GCP', 'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI',
+    important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark', 'Azure', 'Big Data',
+                        'Computer Vision', 'Data Pipelines', 'Data Modeling', 'Data WareHousing', 'Deep Learning', 'Docker',
+                        'ETL', 'Financial Analysis', 'GCP', 'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI',
                         'Natural Language Processing', 'NoSQL', 'Machine Learning', 'Pandas', 'PyTorch',
                         'Snowflake', 'SQL', 'Tableau', 'TensorFlow', 'Programing Language', 'Python', 'Java', 'Scala', 'R']
     skill_count = []
@@ -66,11 +65,7 @@ def generate_bar_chart(df_sel):
                  y='skill',
                  color='mandatory',
                  category_orders={"mandatory": ["mandatory", "advantage"],
-                                  #"smoker": ["Yes", "No"],
-                                  #"sex": ["Male", "Female"]
                                   },
-                 #orientation='h',
-                 #custom_data=[color_col, 'size'],
                  )
     fig.update_layout(
         title='Top 15 skills',
@@ -84,12 +79,12 @@ def generate_line_chart(df_sel):
     df_sel['first_online_est'] = pd.to_datetime(df_sel['first_online_est'])
     df_sel['week_num'] = df_sel['first_online_est'].dt.isocalendar().week
     df_dates = df_sel.loc[df_sel['first_online_est'] > '2024-01-14']
-    df_dates = df_dates.groupby('week_num', as_index=False).agg({"url":"nunique"})
-    #df_dates = df_dates.loc[df_dates['week_num'] > 3]
+    #df_dates = df_dates.groupby('week_num', as_index=False).agg({"url":"nunique"})
+    df_dates = df_dates.groupby('week_num', as_index=False).agg(jobs_count = ("url", "nunique"))
 
     fig = px.line(df_dates,
                   x="week_num",
-                  y="url",
+                  y="jobs_count",
                   #color='country'
                   )
 
@@ -99,10 +94,73 @@ def generate_line_chart(df_sel):
     )
     return fig
 
+def generate_single_bar_en(df_sel):
+    df_sel['English'] = 0
+    df_sel.loc[df_sel['languages'].str.contains('English', na=False), 'English'] = 1
+    df_sel['x'] = 'English'
+    fig = px.histogram(df_sel,
+                       y='x',
+                       color='English',
+                       barnorm='percent',
+                       height=75,
+                       category_orders={"English": [0, 1]},
+                       )
+    fig.update_layout(
+        yaxis_title=None,
+        xaxis_title=None,
+        showlegend=False,
+    )
+    fig.update_xaxes(visible=False)
+    fig.update_layout(margin={"t": 0, "b": 0})
+    return fig
+
+def generate_single_bar_he(df_sel):
+    df_sel['Hebrew'] = 0
+    df_sel.loc[df_sel['languages'].str.contains('Hebrew', na=False), 'Hebrew'] = 1
+    df_sel['x'] = 'Hebrew'
+    fig = px.histogram(df_sel,
+                       y='x',
+                       color='Hebrew',
+                       barnorm='percent',
+                       height=75,
+                       category_orders={"Hebrew": [0, 1]}
+                       )
+    fig.update_layout(
+        yaxis_title=None,
+        xaxis_title=None,
+        showlegend=False,
+    )
+    fig.update_xaxes(visible=False)
+    fig.update_layout(margin={"t": 0, "b": 0})
+    return fig
+
+def generate_single_bar_degree(df_sel):
+    df_sel['edu'] = 'No Degree Requirements'
+    df_sel.loc[df_sel['education'].str.contains('Ph.D.', na=False), 'edu'] = 'Ph.D.'
+    df_sel.loc[df_sel['education'].str.contains('MBA', na=False), 'edu'] = 'MBA'
+    df_sel.loc[df_sel['education'].str.contains('M.Sc.', na=False), 'edu'] = 'M.Sc.'
+    df_sel.loc[df_sel['education'].str.contains('B.Sc.', na=False), 'edu'] = 'B.Sc.'
+    df_sel['x'] = 'Degree'
+    fig = px.histogram(df_sel,
+                       y='x',
+                       color='edu',
+                       barnorm='percent',
+                       height=75,
+                       category_orders={"edu": ['No Degree Requirements', 'B.Sc.', 'M.Sc.', 'MBA', 'Ph.D.']}
+                       )
+    fig.update_layout(
+        yaxis_title=None,
+        xaxis_title=None,
+        showlegend=False,
+    )
+    fig.update_xaxes(visible=False)
+    fig.update_layout(margin={"t": 0, "b": 0})
+    return fig
+
 def generate_pie_cloud(df_sel):
-    df_pie = df_sel.groupby('cloud_skills', as_index=False).agg({"url":"count"})
+    df_pie = df_sel.groupby('cloud_skills', as_index=False).agg(jobs_count = ("url", "nunique"))
     fig = px.pie(df_pie,
-                 values='url',
+                 values='jobs_count',
                  names='cloud_skills',
                  title='Cloud Skills',
                  hole=.5
@@ -111,9 +169,9 @@ def generate_pie_cloud(df_sel):
     return fig
 
 def generate_pie_district(df_sel):
-    df_pie = df_sel.groupby('district', as_index=False).agg({"url":"count"})
+    df_pie = df_sel.groupby('district', as_index=False).agg(jobs_count = ("url", "nunique"))
     fig = px.pie(df_pie,
-                 values='url',
+                 values='jobs_count',
                  names='district',
                  title='Vacancies by District',
                  hole=.5
@@ -124,6 +182,9 @@ def generate_pie_district(df_sel):
 fig_bar = generate_bar_chart(df)
 fig_line = generate_line_chart(df)
 fig_pie_district = generate_pie_district(df)
+fig_en = generate_single_bar_en(df)
+fig_he = generate_single_bar_he(df)
+fig_edu = generate_single_bar_degree(df)
 #fig_pie_cloud = generate_pie_cloud(df)
 
 # Layout of Dash App
@@ -178,11 +239,11 @@ app.layout = html.Div(
                 dbc.Col(
                     #className="eight columns div-for-charts bg-grey",
                     children=[
-                        dbc.Row(
-                            # className="row",
-                            children=[
-                                html.P(id='exp-text')
-                            ]),
+                        #dbc.Row(
+                        #    # className="row",
+                        #    children=[
+                        #
+                        #    ]),
                         dbc.Row(
                             #className="row",
                             children=[
@@ -192,7 +253,15 @@ app.layout = html.Div(
                         dbc.Row(
                             #className="row",
                             children=[
-                                html.Div([dcc.Graph(id="line_chart", figure=fig_line)])
+                                dbc.Col(html.Div([dcc.Graph(id="line_chart", figure=fig_line)]), width=8),
+                                dbc.Col([
+                                    dbc.Card([
+                                        html.P(id='exp-text'),
+                                        dcc.Graph(id="single_bar_en", figure=fig_en),
+                                        dcc.Graph(id="single_bar_he", figure=fig_he),
+                                        dcc.Graph(id="single_bar_degree", figure=fig_edu)
+                                    ])
+                                ], width=4)
                             ])
                     ], width=10
 
@@ -211,6 +280,9 @@ app.layout = html.Div(
     Output("line_chart", "figure"),
     Output("pie_district", "figure"),
     Output("exp-text", "children"),
+    Output("single_bar_en", "figure"),
+    Output("single_bar_he", "figure"),
+    Output("single_bar_degree", "figure"),
     [
         Input("job-type", "value"),
         Input("all-types", "value")
@@ -229,13 +301,16 @@ def filter_df(job_type, all_types):
     fig_bar = generate_bar_chart(df_selected)
     fig_line = generate_line_chart(df_selected)
     fig_pie_cloud = generate_pie_district(df_selected)
+    fig_en = generate_single_bar_en(df_selected)
+    fig_he = generate_single_bar_he(df_selected)
+    fig_edu = generate_single_bar_degree(df_selected)
 
     selected_jobs_string = "Vacancies Selected: {:,d}".format(
         len(df_selected) )
 
     exp_text = f"average min experience {df_selected['min_experience'].mean():.2f} years"
 
-    return selected_jobs_string, fig_bar, fig_line, fig_pie_cloud, exp_text
+    return selected_jobs_string, fig_bar, fig_line, fig_pie_cloud, exp_text, fig_en, fig_he, fig_edu
 
 
 if __name__ == '__main__':
