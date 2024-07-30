@@ -1,11 +1,12 @@
 import dash
 from dash import dcc, html
+from dash.dependencies import Input, Output
 import pandas as pd
 import numpy as np
 import dash_bootstrap_components as dbc
 import dash_bootstrap_templates
+from datetime import date
 
-from dash.dependencies import Input, Output
 #import dash_leaflet as dl
 #import dash_leaflet.express as dlx
 
@@ -30,16 +31,19 @@ app.title = "Data Jobs 2024"
 server = app.server
 
 df = pd.read_csv('to_analysis_indeed.csv')
+df['first_online'] = pd.to_datetime(df['first_online'])
+pd.options.mode.chained_assignment = None
 
 
 all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
                      {"label": "Data Analyst Jobs", "value": "type_da"},
                      {"label": "Data Engineer Jobs", "value": "type_de"},
-                     {"label": "Business Intelligence Jobs", "value": "type_bi"},
+                     {"label": "BI Jobs", "value": "type_bi"},
                      {"label": "AI/ML Jobs", "value": "type_aiml"},]
 
 
 def generate_bar_chart(df_sel):
+    df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark', 'Azure', 'Big Data',
                         'Computer Vision', 'Data Pipelines', 'Data Modeling', 'Data WareHousing', 'Deep Learning', 'Docker',
                         'ETL', 'Financial Analysis', 'GCP', 'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI',
@@ -57,9 +61,10 @@ def generate_bar_chart(df_sel):
 
     df_skill = pd.DataFrame(skill_count, columns=['skill', 'count', 'mandatory'])
     df_skill['total'] = df_skill.groupby('skill')['count'].transform('sum')
-    df_skill = df_skill.sort_values('total', ascending=False)[:30]
+    df_skill = df_skill.loc[df_skill['total'] > 0]
+    df_skill = df_skill.sort_values(['total', 'skill'], ascending=False)[:30]
+    #print(df_skill)
 
-    # fig = make_subplots(rows=1, cols=4, shared_yaxes=True)
     fig = px.bar(df_skill,
                  x='count',
                  y='skill',
@@ -76,10 +81,9 @@ def generate_bar_chart(df_sel):
     return fig
 
 def generate_line_chart(df_sel):
-    df_sel['first_online_est'] = pd.to_datetime(df_sel['first_online_est'])
-    df_sel['week_num'] = df_sel['first_online_est'].dt.isocalendar().week
-    df_dates = df_sel.loc[df_sel['first_online_est'] > '2024-01-14']
-    #df_dates = df_dates.groupby('week_num', as_index=False).agg({"url":"nunique"})
+    df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
+    df_sel['week_num'] = df_sel['first_online'].dt.isocalendar().week
+    df_dates = df_sel.loc[df_sel['first_online'] > '2024-01-14']
     df_dates = df_dates.groupby('week_num', as_index=False).agg(jobs_count = ("url", "nunique"))
 
     fig = px.line(df_dates,
@@ -95,6 +99,7 @@ def generate_line_chart(df_sel):
     return fig
 
 def generate_single_bar_en(df_sel):
+    df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel['English'] = 0
     df_sel.loc[df_sel['languages'].str.contains('English', na=False), 'English'] = 1
     df_sel['x'] = 'English'
@@ -115,6 +120,7 @@ def generate_single_bar_en(df_sel):
     return fig
 
 def generate_single_bar_he(df_sel):
+    df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel['Hebrew'] = 0
     df_sel.loc[df_sel['languages'].str.contains('Hebrew', na=False), 'Hebrew'] = 1
     df_sel['x'] = 'Hebrew'
@@ -135,6 +141,7 @@ def generate_single_bar_he(df_sel):
     return fig
 
 def generate_single_bar_degree(df_sel):
+    df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel['edu'] = 'No Degree Requirements'
     df_sel.loc[df_sel['education'].str.contains('Ph.D.', na=False), 'edu'] = 'Ph.D.'
     df_sel.loc[df_sel['education'].str.contains('MBA', na=False), 'edu'] = 'MBA'
@@ -158,6 +165,7 @@ def generate_single_bar_degree(df_sel):
     return fig
 
 def generate_pie_cloud(df_sel):
+    df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_pie = df_sel.groupby('cloud_skills', as_index=False).agg(jobs_count = ("url", "nunique"))
     fig = px.pie(df_pie,
                  values='jobs_count',
@@ -227,6 +235,15 @@ app.layout = html.Div(
                                             ),
                                         ],
                                     ),
+                                    html.Div([
+                                        dcc.DatePickerRange(
+                                            id='time-period',
+                                            min_date_allowed=date(2024, 1, 11),
+                                            max_date_allowed=max(df['first_online']),
+                                            #initial_visible_month=date(2017, 8, 5),
+                                            #end_date=date(2017, 8, 25)
+                                            ),
+                                    ]),
                                 ],
                             ),
                             html.Br(),
