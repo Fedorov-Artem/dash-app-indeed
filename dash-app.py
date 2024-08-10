@@ -6,8 +6,6 @@ import numpy as np
 import dash_bootstrap_components as dbc
 import dash_bootstrap_templates
 from datetime import date
-#from datetime import datetime
-
 
 #import dash_leaflet as dl
 #import dash_leaflet.express as dlx
@@ -44,6 +42,12 @@ all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
                      {"label": "BI Jobs", "value": "type_bi"},
                      {"label": "AI/ML Jobs", "value": "type_aiml"},]
 
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": "70px",
+    "padding-left" : "4px",
+}
+
 
 def generate_bar_chart(df_sel):
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
@@ -65,8 +69,7 @@ def generate_bar_chart(df_sel):
     df_skill = pd.DataFrame(skill_count, columns=['skill', 'count', 'mandatory'])
     df_skill['total'] = df_skill.groupby('skill')['count'].transform('sum')
     df_skill = df_skill.loc[df_skill['total'] > 0]
-    df_skill = df_skill.sort_values(['total', 'skill'], ascending=False)[:30]
-
+    df_skill = df_skill.sort_values(['total', 'skill'])[-30:]
     fig = px.bar(df_skill,
                  x='count',
                  y='skill',
@@ -75,7 +78,7 @@ def generate_bar_chart(df_sel):
                                   },
                  )
     fig.update_layout(
-        title='Top 15 skills',
+        title='Top 15 Skills',
         yaxis_title=None,
         xaxis_title=None,
         showlegend=False
@@ -224,14 +227,13 @@ def generate_pie_district(df_sel):
 def generate_bar_chart_companies(df_sel):
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel = df_sel.loc[df_sel['is_direct'] > 0]
-    df_emp = df_sel['company'].value_counts()[:15].reset_index()
-
+    df_emp = df_sel['company'].value_counts()[:15].reset_index().sort_values('count')
     fig = px.bar(df_emp,
                  x='count',
                  y='company',
                  )
     fig.update_layout(
-        title='Top 15 Employers',
+        title='Top 15 Direct Employers',
         yaxis_title=None,
         xaxis_title=None,
         showlegend=False
@@ -254,12 +256,16 @@ fig_bar_companies = generate_bar_chart_companies(df)
 # Layout of Dash App
 app.layout = html.Div(
     children=[
-        dbc.Row([html.H2("Data Jobs 2024"),]),
+        dbc.Navbar([html.H2("Data Jobs 2024", style={"color":"white", "padding-left" : "4px"})],
+            color="#385682",
+            dark=True,
+            sticky="top",
+        ),
         dbc.Row(
             #className="row",
             children=[
                 # Column for user controls
-                dbc.Col(
+                dbc.Col(html.Div(
                     children=[
                         #dbc.Card([
                             html.P("""Select Job Type."""),
@@ -298,7 +304,6 @@ app.layout = html.Div(
                                             max_date_allowed=str(max(df['first_online']).date()),
                                             start_date=str(min(df['first_online']).date()),
                                             end_date=str(max(df['first_online']).date()),
-                                            #initial_visible_month=date(2017, 8, 5),
                                             #end_date=date(2017, 8, 25),
                                             className='dbc'
                                             ),
@@ -312,40 +317,34 @@ app.layout = html.Div(
                                 ],
                             ),
                             html.Br(),
-                            html.P("Total Vacancies: " + str(len(df))),
+                            html.P("Total Vacancies: {:,d}".format(len(df))),
+
                             html.P(id="total-vacancies")
                         #]),
-                    ], width=2
-                ),
+                    ], style=SIDEBAR_STYLE,
+                ), width=2, style = {"background-color": "#f8f9fa"}),
                 # Column for app graphs and plots
                 dbc.Col(
                     #className="eight columns div-for-charts bg-grey",
                     children=[
-                        #dbc.Row(
-                        #    # className="row",
-                        #    children=[
-                        #
-                        #    ]),
                         dbc.Row(
                             #className="row",
                             children=[
                                 dbc.Col([dcc.Graph(id="bar_chart", figure=fig_bar)], width=8),
-                                dbc.Col([dcc.Graph(id="pie_district", figure=fig_pie_district)], width=4),
+                                dbc.Col([dbc.Card([
+                                    html.P(id='exp-text'),
+                                    html.P(id='av-days-text'),
+                                    dcc.Graph(id="single_bar_en", figure=fig_en),
+                                    dcc.Graph(id="single_bar_he", figure=fig_he),
+                                    dcc.Graph(id="single_bar_degree", figure=fig_edu),
+                                    dcc.Graph(id="single_bar_recr", figure=fig_recr),
+                                ])], width=4),
                             ]),
                         dbc.Row(
                             #className="row",
                             children=[
                                 dbc.Col(html.Div([dcc.Graph(id="line_chart", figure=fig_line)]), width=8),
-                                dbc.Col([
-                                    dbc.Card([
-                                        html.P(id='exp-text'),
-                                        html.P(id='av-days-text'),
-                                        dcc.Graph(id="single_bar_en", figure=fig_en),
-                                        dcc.Graph(id="single_bar_he", figure=fig_he),
-                                        dcc.Graph(id="single_bar_degree", figure=fig_edu),
-                                        dcc.Graph(id="single_bar_recr", figure=fig_recr),
-                                    ])
-                                ], width=4)
+                                dbc.Col([dcc.Graph(id="pie_district", figure=fig_pie_district)], width=4)
                             ]),
                         dbc.Row(
                             # className="row",
@@ -356,12 +355,10 @@ app.layout = html.Div(
                                 ], width=4)
                             ]),
                     ], width=10
-
                 ),
-            ],
+            ], className='dbc'
         ),
-
-    ], className='dbc'
+    ]
 )
 
 
@@ -420,7 +417,7 @@ def filter_df(job_type, all_types, start_date, end_date, include_older):
     selected_jobs_string = "Vacancies Selected: {:,d}".format(
         len(df_selected) )
 
-    exp_text = f"average min experience {df_selected['min_experience'].mean():.2f} years"
+    exp_text = f"average min experience is {df_selected['min_experience'].mean():.2f} years"
     av_days_text = f"average diff is {df_selected['day_diff'].mean():.2f} days"
 
     return selected_jobs_string, fig_bar, fig_line, fig_pie_cloud, exp_text, fig_en, fig_he, fig_edu, fig_recr,\
