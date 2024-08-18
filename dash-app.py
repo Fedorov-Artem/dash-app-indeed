@@ -20,11 +20,13 @@ dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.mi
 #dbc_css = "dbc.min.css"
 
 
-dash_bootstrap_templates.load_figure_template('sandstone')
+#dash_bootstrap_templates.load_figure_template('sandstone')
+dash_bootstrap_templates.load_figure_template('SANDSTONE')
+
 
 app = dash.Dash(
     __name__, #meta_tags=[{"name": "viewport", "content": "width=device-width"}],
-    external_stylesheets=[dbc.themes.SANDSTONE, dbc_css]
+    external_stylesheets=[dbc.themes.SANDSTONE, dbc.icons.FONT_AWESOME, dbc_css]
 )
 app.title = "Data Jobs 2024"
 server = app.server
@@ -41,12 +43,6 @@ all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
                      {"label": "Data Engineer Jobs", "value": "type_de"},
                      {"label": "BI Jobs", "value": "type_bi"},
                      {"label": "AI/ML Jobs", "value": "type_aiml"},]
-
-SIDEBAR_STYLE = {
-    "position": "fixed",
-    "top": "70px",
-    "padding-left" : "4px",
-}
 
 
 def generate_bar_chart(df_sel):
@@ -256,11 +252,14 @@ fig_bar_companies = generate_bar_chart_companies(df)
 # Layout of Dash App
 app.layout = html.Div(
     children=[
-        dbc.Navbar([html.H2("Data Jobs 2024", style={"color":"white", "padding-left" : "4px"})],
-            color="#385682",
-            dark=True,
-            sticky="top",
-        ),
+        dbc.Navbar([html.H2("Data Jobs 2024",
+                            #style={"color": "white", "padding-left": "4px"},
+                            className='bg-primary text-white p-2 mb-2 text-center',
+                            )],
+                   sticky="top",
+                   color="primary",
+                   #className='mb-4',
+                   ),
         dbc.Row(
             #className="row",
             children=[
@@ -268,34 +267,31 @@ app.layout = html.Div(
                 dbc.Col(html.Div(
                     children=[
                         #dbc.Card([
-                            html.P("""Select Job Type."""),
                             # Change to side-by-side for mobile layout
                             html.Div(
                                 #className="row",
                                 children=[
                                     html.Div(
                                         children=[
+                                            dbc.Label("Select Job Type", html_for="dropdown"),
                                             # Dropdown for job type
                                             dcc.Dropdown(
                                                 id="job-type",
                                                 options=df['job_type'].unique(),
                                                 value=[],
                                                 multi=True,
-                                                className='dbc'
                                             ),
-                                        ],
+                                        ], className='mb-4'
                                     ),
                                     html.Div(
-                                        #className="div-for-dropdown",
                                         children=[
                                             # Checkboxes for data professions
-                                            dcc.Checklist(
+                                            dbc.Checklist(
                                                 id="all-types",
                                                 options=all_types_options,
                                                 value=[],
-                                                className='dbc'
                                             ),
-                                        ],
+                                        ], className='mb-4'
                                     ),
                                     html.Div([
                                         dcc.DatePickerRange(
@@ -305,15 +301,13 @@ app.layout = html.Div(
                                             start_date=str(min(df['first_online']).date()),
                                             end_date=str(max(df['first_online']).date()),
                                             #end_date=date(2017, 8, 25),
-                                            className='dbc'
-                                            ),
-                                        dcc.Checklist(
+                                        ),
+                                        dbc.Checklist(
                                             id="include-older",
                                             options=['include older'],
                                             value=['include older'],
-                                            className='dbc'
                                         ),
-                                    ]),
+                                    ], className='mb-4'),
                                 ],
                             ),
                             html.Br(),
@@ -321,11 +315,11 @@ app.layout = html.Div(
 
                             html.P(id="total-vacancies")
                         #]),
-                    ], style=SIDEBAR_STYLE,
-                ), width=2, style = {"background-color": "#f8f9fa"}),
+                    ], style={"padding-left" : "4px"},
+                ), width=2, style = {"background-color": "#f8f9fa", "top": 0, "position": "sticky"}
+                ),
                 # Column for app graphs and plots
                 dbc.Col(
-                    #className="eight columns div-for-charts bg-grey",
                     children=[
                         dbc.Row(
                             #className="row",
@@ -356,7 +350,7 @@ app.layout = html.Div(
                             ]),
                     ], width=10
                 ),
-            ], className='dbc'
+            ], className='dbc dbc-ag-grid'
         ),
     ]
 )
@@ -397,7 +391,6 @@ def filter_df(job_type, all_types, start_date, end_date, include_older):
     start_date = date.fromisoformat(start_date)
     end_date = date.fromisoformat(end_date)
 
-    #print(type(start_date))
     if len(include_older) > 0:
         df_selected = df_selected.loc[((df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)) |
         df_selected['first_online'].isnull()]
