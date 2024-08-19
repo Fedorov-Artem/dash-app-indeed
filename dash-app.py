@@ -20,12 +20,11 @@ dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.mi
 #dbc_css = "dbc.min.css"
 
 
-#dash_bootstrap_templates.load_figure_template('sandstone')
 dash_bootstrap_templates.load_figure_template('SANDSTONE')
 
 
 app = dash.Dash(
-    __name__, #meta_tags=[{"name": "viewport", "content": "width=device-width"}],
+    __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],
     external_stylesheets=[dbc.themes.SANDSTONE, dbc.icons.FONT_AWESOME, dbc_css]
 )
 app.title = "Data Jobs 2024"
@@ -117,7 +116,7 @@ def generate_single_bar_en(df_sel):
         showlegend=False,
     )
     fig.update_xaxes(visible=False)
-    fig.update_layout(margin={"t": 0, "b": 0})
+    fig.update_layout(margin={"t": 0, "b": 0, "r": 0})
     return fig
 
 def generate_single_bar_he(df_sel):
@@ -138,7 +137,7 @@ def generate_single_bar_he(df_sel):
         showlegend=False,
     )
     fig.update_xaxes(visible=False)
-    fig.update_layout(margin={"t": 0, "b": 0})
+    fig.update_layout(margin={"t": 0, "b": 0, "r": 0})
     return fig
 
 def generate_single_bar_degree(df_sel):
@@ -162,7 +161,7 @@ def generate_single_bar_degree(df_sel):
         showlegend=False,
     )
     fig.update_xaxes(visible=False)
-    fig.update_layout(margin={"t": 0, "b": 0})
+    fig.update_layout(margin={"t": 0, "b": 0, "r": 0})
     return fig
 
 def generate_single_bar_recruter(df_sel):
@@ -182,7 +181,7 @@ def generate_single_bar_recruter(df_sel):
         showlegend=False,
     )
     fig.update_xaxes(visible=False)
-    fig.update_layout(margin={"t": 0, "b": 0})
+    fig.update_layout(margin={"t": 0, "b": 0, "r": 0})
     return fig
 
 def generate_pie_cloud(df_sel):
@@ -248,13 +247,12 @@ fig_pie_viz = generate_pie_viz(df)
 fig_bar_companies = generate_bar_chart_companies(df)
 
 
-
 # Layout of Dash App
-app.layout = html.Div(
+app.layout = dbc.Container(
     children=[
         dbc.Navbar([html.H2("Data Jobs 2024",
-                            #style={"color": "white", "padding-left": "4px"},
-                            className='bg-primary text-white p-2 mb-2 text-center',
+                            style={"color": "white", "padding-left": "4px"},
+                            #className='bg-primary text-white p-2 mb-2 text-center',
                             )],
                    sticky="top",
                    color="primary",
@@ -273,6 +271,7 @@ app.layout = html.Div(
                                 children=[
                                     html.Div(
                                         children=[
+                                            html.Br(),
                                             dbc.Label("Select Job Type", html_for="dropdown"),
                                             # Dropdown for job type
                                             dcc.Dropdown(
@@ -316,7 +315,7 @@ app.layout = html.Div(
                             html.P(id="total-vacancies")
                         #]),
                     ], style={"padding-left" : "4px"},
-                ), width=2, style = {"background-color": "#f8f9fa", "top": 0, "position": "sticky"}
+                ), style = {"position": "fixed", "background-color": "#f8f9fa", "top": "4rem", "bottom":0, "width":"20rem"}
                 ),
                 # Column for app graphs and plots
                 dbc.Col(
@@ -348,12 +347,12 @@ app.layout = html.Div(
                                     dbc.Col([dcc.Graph(id="pie_viz", figure=fig_pie_viz)]),
                                 ], width=4)
                             ]),
-                    ], width=10
+                    ], style = {"margin-left": "21rem"}
                 ),
-            ], className='dbc dbc-ag-grid'
+            ], className='dbc'
         ),
     ]
-)
+, fluid=True)
 
 
 #Update Map Graph based on date-picker, selected data on histogram and location dropdown
