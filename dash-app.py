@@ -27,7 +27,7 @@ app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],
     external_stylesheets=[dbc.themes.SANDSTONE, dbc.icons.FONT_AWESOME, dbc_css]
 )
-app.title = "Data Jobs 2024"
+app.title = "Data Jobs in Israel 2024"
 server = app.server
 
 df = pd.read_csv('to_analysis_indeed.csv')
@@ -250,7 +250,7 @@ fig_bar_companies = generate_bar_chart_companies(df)
 # Layout of Dash App
 app.layout = dbc.Container(
     children=[
-        dbc.Navbar([html.H2("Data Jobs 2024",
+        dbc.Navbar([html.H2("Data Jobs in Israel 2024",
                             style={"color": "white", "padding-left": "4px"},
                             #className='bg-primary text-white p-2 mb-2 text-center',
                             )],
@@ -327,10 +327,10 @@ app.layout = dbc.Container(
                                 dbc.Col([dbc.Card([
                                     html.P(id='exp-text'),
                                     html.P(id='av-days-text'),
-                                    dcc.Graph(id="single_bar_en", figure=fig_en),
-                                    dcc.Graph(id="single_bar_he", figure=fig_he),
-                                    dcc.Graph(id="single_bar_degree", figure=fig_edu),
-                                    dcc.Graph(id="single_bar_recr", figure=fig_recr),
+                                    dcc.Graph(id="single_bar_en", figure=fig_en, config= {'displayModeBar': False}),
+                                    dcc.Graph(id="single_bar_he", figure=fig_he, config= {'displayModeBar': False}),
+                                    dcc.Graph(id="single_bar_degree", figure=fig_edu, config= {'displayModeBar': False}),
+                                    dcc.Graph(id="single_bar_recr", figure=fig_recr, config= {'displayModeBar': False}),
                                 ])], width=4),
                             ]),
                         dbc.Row(
