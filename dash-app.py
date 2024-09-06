@@ -15,11 +15,7 @@ import plotly.express as px
 #from plotly.tools import make_subplots
 #from plotly.subplots import make_subplots
 
-#dbc_css = "./assets/css/bootstrap.min.css"
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
-#dbc_css = "dbc.min.css"
-
-
 dash_bootstrap_templates.load_figure_template('SANDSTONE')
 
 
@@ -84,18 +80,24 @@ def generate_line_chart(df_sel):
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_dates = df_sel.loc[df_sel['first_online'] > '2024-01-14']
     df_dates['week_num'] = df_dates['first_online'].dt.strftime('%U').astype(int)
-    df_dates = df_dates.groupby('week_num', as_index=False).agg(jobs_count = ("url", "nunique"))
+    df_dates = df_dates.groupby('week_num').agg(
+        jobs_count = ("url", "nunique"),
+        month_of_last_day = ("first_online", "max")
+    )
 
     fig = px.line(df_dates,
-                  x="week_num",
+                  x="month_of_last_day",
                   y="jobs_count",
-                  #color='country'
                   )
 
     fig.update_layout(
         title='New Vacancies per Week',
-        yaxis_title='total_jobs'
+        yaxis_title=None,
+        xaxis_title=None
     )
+    fig.update_xaxes(
+        dtick="M1",
+        tickformat="%b")
     return fig
 
 def generate_single_bar_en(df_sel):
