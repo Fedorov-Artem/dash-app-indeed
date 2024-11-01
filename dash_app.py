@@ -16,7 +16,7 @@ import plotly.express as px
 #from plotly.subplots import make_subplots
 
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
-dash_bootstrap_templates.load_figure_template('SANDSTONE')
+dash_bootstrap_templates.load_figure_template('sandstone')
 
 
 app = dash.Dash(
