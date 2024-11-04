@@ -168,8 +168,8 @@ def generate_single_bar_degree(df_sel):
 
 def generate_single_bar_recruter(df_sel):
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
-    df_sel['recr'] = 'From one of Recruter Companies'
-    df_sel.loc[df_sel['is_direct'] == 1, 'recr'] = 'Is Direct'
+    df_sel['recr'] = 'Recruter Company'
+    df_sel.loc[df_sel['is_direct'] == 1, 'recr'] = 'Direct Employer'
     df_sel['x'] = 'Is Direct'
     fig = px.histogram(df_sel,
                        y='x',
@@ -266,10 +266,8 @@ app.layout = dbc.Container(
                 # Column for user controls
                 dbc.Col(html.Div(
                     children=[
-                        #dbc.Card([
                             # Change to side-by-side for mobile layout
                             html.Div(
-                                #className="row",
                                 children=[
                                     html.Div(
                                         children=[
@@ -313,9 +311,8 @@ app.layout = dbc.Container(
                             ),
                             html.Br(),
                             html.P("Total Vacancies: {:,d}".format(len(df))),
-
-                            html.P(id="total-vacancies")
-                        #]),
+                            html.P(id="total-vacancies"),
+                            html.P(id='exp-text')
                     ], style={"padding-left" : "4px"},
                 ), style = {"position": "fixed", "background-color": "#f8f9fa", "top": "4rem", "bottom":0, "width":"20rem"}
                 ),
@@ -327,22 +324,19 @@ app.layout = dbc.Container(
                             children=[
                                 dbc.Col([dcc.Graph(id="bar_chart", figure=fig_bar)], width=8),
                                 dbc.Col([dbc.Card([
-                                    html.P(id='exp-text'),
-                                    html.P(id='av-days-text'),
+                                    html.H6("Language/Degree Requirements, Employer type", className="card-title"),
                                     dcc.Graph(id="single_bar_en", figure=fig_en, config= {'displayModeBar': False}),
                                     dcc.Graph(id="single_bar_he", figure=fig_he, config= {'displayModeBar': False}),
                                     dcc.Graph(id="single_bar_degree", figure=fig_edu, config= {'displayModeBar': False}),
                                     dcc.Graph(id="single_bar_recr", figure=fig_recr, config= {'displayModeBar': False}),
-                                ])], width=4),
+                                ], style = {"top": "1rem"})], width=4),
                             ]),
                         dbc.Row(
-                            #className="row",
                             children=[
                                 dbc.Col(html.Div([dcc.Graph(id="line_chart", figure=fig_line)]), width=8),
                                 dbc.Col([dcc.Graph(id="pie_district", figure=fig_pie_district)], width=4)
                             ]),
                         dbc.Row(
-                            # className="row",
                             children=[
                                 dbc.Col(html.Div([dcc.Graph(id="bar_companies", figure=fig_bar_companies)]), width=8),
                                 dbc.Col([
@@ -370,7 +364,6 @@ app.layout = dbc.Container(
     Output("single_bar_recr", "figure"),
     Output("bar_companies", "figure"),
     Output("pie_viz", "figure"),
-    Output("av-days-text", "children"),
     [
         Input("job-type", "value"),
         Input("all-types", "value"),
@@ -411,11 +404,10 @@ def filter_df(job_type, all_types, start_date, end_date, include_older):
     selected_jobs_string = "Vacancies Selected: {:,d}".format(
         len(df_selected) )
 
-    exp_text = f"average min experience is {df_selected['min_experience'].mean():.2f} years"
-    av_days_text = f"average diff is {df_selected['day_diff'].mean():.2f} days"
+    exp_text = f"Mean required experience: {df_selected['min_experience'].mean():.2f} years"
 
     return selected_jobs_string, fig_bar, fig_line, fig_pie_cloud, exp_text, fig_en, fig_he, fig_edu, fig_recr,\
-           fig_bar_companies, fig_pie_viz, av_days_text
+           fig_bar_companies, fig_pie_viz
 
 if __name__ == '__main__':
     app.run_server()
