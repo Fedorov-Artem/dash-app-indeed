@@ -10,7 +10,8 @@ from datetime import date
 #import dash_leaflet.express as dlx
 
 import plotly.express as px
-dash.register_page(__name__, path='/')
+dash.register_page(__name__, path='/', title='Data Jobs in Israel 2024')
+
 
 df = pd.read_csv('to_analysis_indeed.csv')
 df['first_online'] = pd.to_datetime(df['first_online'])
@@ -56,7 +57,8 @@ def generate_bar_chart(df_sel):
                                   },
                  )
     fig.update_layout(
-        title='Top 15 Skills',
+        title='Top 15 Skills <br>'
+              '<sup>Most commonly mentioned skills, blue bar for mandatory skills, red - for those marked as an advantage.</sup>',
         yaxis_title=None,
         xaxis_title=None,
         showlegend=False
