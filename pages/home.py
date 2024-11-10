@@ -57,8 +57,8 @@ def generate_bar_chart(df_sel):
                                   },
                  )
     fig.update_layout(
-        title='Top 15 Skills <br>'
-              '<sup>Most commonly mentioned skills, blue bar for mandatory skills, red - for those marked as an advantage.</sup>',
+        title='Top 15 Most Commonly Mentioned Skills',#<br>'
+              #'<sup>, blue bar for mandatory skills, red - for those marked as an advantage.</sup>',
         yaxis_title=None,
         xaxis_title=None,
         showlegend=False
@@ -193,7 +193,7 @@ def generate_pie_viz(df_sel):
     fig = px.pie(df_pie,
                  values='jobs_count',
                  names='viz_tools',
-                 title='Viz Tools',
+                 title='Visualization Tools',
                  hole=.5
                  )
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
@@ -297,25 +297,23 @@ layout = dbc.Row(
                 dbc.Row(
                     children=[
                         dbc.Col([dcc.Graph(id="bar_chart", figure=fig_bar)], width=8),
-                        dbc.Col([dbc.Card([
-                            html.H6("Language/Degree Requirements, Employer type", className="card-title"),
-                            dcc.Graph(id="single_bar_en", figure=fig_en, config= {'displayModeBar': False}),
-                            dcc.Graph(id="single_bar_he", figure=fig_he, config= {'displayModeBar': False}),
-                            dcc.Graph(id="single_bar_degree", figure=fig_edu, config= {'displayModeBar': False}),
-                            dcc.Graph(id="single_bar_recr", figure=fig_recr, config= {'displayModeBar': False}),
-                        ], style = {"top": "1rem"})], width=4),
-                    ]),
-                dbc.Row(
-                    children=[
-                        dbc.Col(html.Div([dcc.Graph(id="line_chart", figure=fig_line)]), width=8),
                         dbc.Col([dcc.Graph(id="pie_district", figure=fig_pie_district)], width=4)
                     ]),
                 dbc.Row(
                     children=[
+                        dbc.Col(html.Div([dcc.Graph(id="line_chart", figure=fig_line)]), width=8),
+                        dbc.Col([dbc.Card([
+                            html.H6("Language/Degree Requirements, Employer type", className="card-title"),
+                            dcc.Graph(id="single_bar_en", figure=fig_en, config={'displayModeBar': False}),
+                            dcc.Graph(id="single_bar_he", figure=fig_he, config={'displayModeBar': False}),
+                            dcc.Graph(id="single_bar_degree", figure=fig_edu, config={'displayModeBar': False}),
+                            dcc.Graph(id="single_bar_recr", figure=fig_recr, config={'displayModeBar': False}),
+                        ], style={"top": "1rem"})], width=4),
+                    ]),
+                dbc.Row(
+                    children=[
                         dbc.Col(html.Div([dcc.Graph(id="bar_companies", figure=fig_bar_companies)]), width=8),
-                        dbc.Col([
-                            dbc.Col([dcc.Graph(id="pie_viz", figure=fig_pie_viz)]),
-                        ], width=4)
+                        dbc.Col([dcc.Graph(id="pie_viz", figure=fig_pie_viz)], width=4)
                 ]),
             ], style = {"margin-left": "21rem"}
         ),
