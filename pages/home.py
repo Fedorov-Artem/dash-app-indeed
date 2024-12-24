@@ -29,12 +29,12 @@ all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
 
 def generate_bar_chart(df_sel):
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
-    important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark', 'Azure', 'Big Data',
-                        'Computer Vision', 'Data Pipelines', 'Data Modeling', 'Data WareHousing', 'Data Visualization',
-                        'Deep Learning', 'Docker', 'ETL', 'Financial Analysis', 'GCP', 'Hadoop', 'Kubernetes', 'Looker',
-                        'MS Excel', 'MS Power BI', 'Natural Language Processing', 'NoSQL', 'Machine Learning', 'Pandas',
-                        'PyTorch', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow', 'Programing Language', 'Python', 'Java',
-                        'Scala', 'R']
+    important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark', 'Apache Hadoop',
+                        'Azure', 'Big Data', 'Computer Vision', 'Data Pipelines', 'Data Modeling', 'Data WareHousing',
+                        'Data Visualization', 'Deep Learning', 'Docker', 'ETL', 'Financial Analysis', 'GCP',
+                        'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI', 'Natural Language Processing', 'NoSQL',
+                        'Machine Learning', 'Pandas', 'PyTorch', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow',
+                        'Programing Language', 'Python', 'Java', 'Scala', 'R']
     skill_count = []
     for skill in important_skills:
         if skill in df_sel:
