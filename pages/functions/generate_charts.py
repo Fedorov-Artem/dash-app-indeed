@@ -44,6 +44,7 @@ def generate_line_chart(df_sel):
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_dates = df_sel.loc[df_sel['first_online'] > '2024-01-14']
     df_dates['week_num'] = df_dates['first_online'].dt.strftime('%U').astype(int)
+    df_dates.loc[df_dates['first_online'].dt.year == 2025, 'week_num'] += 52
     df_dates = df_dates.groupby('week_num').agg(
         jobs_count = ("url", "nunique"),
         month_of_last_day = ("first_online", "max")
