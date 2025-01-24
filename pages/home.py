@@ -17,7 +17,7 @@ import sys
 sys.path.append('/functions')
 from pages.functions import generate_charts as gen_charts
 
-dash.register_page(__name__, path='/', title='Data Jobs in Israel 2024')
+dash.register_page(__name__, path='/', title='Data Jobs in Israel 2024-2025')
 
 df = pd.read_csv('to_analysis_indeed.csv')
 df['first_online'] = pd.to_datetime(df['first_online'])
