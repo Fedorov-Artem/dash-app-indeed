@@ -19,18 +19,10 @@ from pages.functions import generate_charts as gen_charts
 
 dash.register_page(__name__, path='/', title='Data Jobs in Israel 2024-2025')
 
-df = pd.read_csv('to_analysis_indeed.csv')
-df['first_online'] = pd.to_datetime(df['first_online'])
-df['last_online'] = pd.to_datetime(df['last_online'])
-df['day_diff'] = (df['last_online'] - df['first_online']).dt.days
 pd.options.mode.chained_assignment =  None
 
-all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
-                     {"label": "Data Analyst Jobs", "value": "type_da"},
-                     {"label": "Data Engineer Jobs", "value": "type_de"},
-                     {"label": "BI Jobs", "value": "type_bi"},
-                     {"label": "AI/ML Jobs", "value": "type_aiml"},]
-
+df = gen_charts.df
+all_types_options = gen_charts.all_types_options
 
 fig_bar = gen_charts.generate_bar_chart(df)
 fig_line = gen_charts.generate_line_chart(df)
@@ -53,7 +45,7 @@ layout = dbc.Row(
                         html.Div(
                             children=[
                                 html.Br(),
-                                dbc.Label("Select Job Type", html_for="dropdown"),
+                                dbc.Label("Select Job Type", html_for="job-type"),
                                 # Dropdown for job type
                                 dcc.Dropdown(
                                     id="job-type",

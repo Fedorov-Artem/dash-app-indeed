@@ -2,14 +2,28 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
+df = pd.read_csv('to_analysis_indeed.csv')
+df['first_online'] = pd.to_datetime(df['first_online'])
+df['last_online'] = pd.to_datetime(df['last_online'])
+df['day_diff'] = (df['last_online'] - df['first_online']).dt.days
+
+all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
+                     {"label": "Data Analyst Jobs", "value": "type_da"},
+                     {"label": "Data Engineer Jobs", "value": "type_de"},
+                     {"label": "BI Jobs", "value": "type_bi"},
+                     {"label": "AI/ML Jobs", "value": "type_aiml"},]
+
+important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark',
+                    'Apache Hadoop',
+                    'Azure', 'Big Data', 'Computer Vision', 'Data Pipelines', 'Data Modeling',
+                    'Data WareHousing',
+                    'Data Visualization', 'Deep Learning', 'Docker', 'ETL', 'Financial Analysis', 'GCP',
+                    'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI', 'Natural Language Processing', 'NoSQL',
+                    'Machine Learning', 'Pandas', 'PyTorch', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow',
+                    'Programing Language', 'Python', 'Java', 'Scala', 'R']
+
 def generate_bar_chart(df_sel):
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
-    important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark', 'Apache Hadoop',
-                        'Azure', 'Big Data', 'Computer Vision', 'Data Pipelines', 'Data Modeling', 'Data WareHousing',
-                        'Data Visualization', 'Deep Learning', 'Docker', 'ETL', 'Financial Analysis', 'GCP',
-                        'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI', 'Natural Language Processing', 'NoSQL',
-                        'Machine Learning', 'Pandas', 'PyTorch', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow',
-                        'Programing Language', 'Python', 'Java', 'Scala', 'R']
     skill_count = []
     for skill in important_skills:
         if skill in df_sel:
