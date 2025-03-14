@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import dash_bootstrap_components as dbc
 from datetime import date
+from dateutil.relativedelta import relativedelta
 
 #from plotly import graph_objs as go
 #from plotly.tools import make_subplots
@@ -65,18 +66,24 @@ layout = dbc.Row(
                                     ),
                             ]
                         ),
+                        html.Br(),
                         html.Div([
+                            dbc.Label("Select Time Period", html_for="comparison-period"),
+                            dbc.RadioItems(
+                                id="time-period-radio",
+                                options=[
+                                    {'label': 'All time', 'value': 0},
+                                    {'label': 'Six months', 'value': 6},
+                                    {'label': 'Three months', 'value': 3},
+                                    {'label': 'Custom', 'value': -1}],
+                                value=0,
+                            ),
                             dcc.DatePickerRange(
                                 id='time-period',
                                 min_date_allowed=str(min(df['first_online']).date()),
                                 max_date_allowed=str(max(df['first_online']).date()),
                                 start_date=str(min(df['first_online']).date()),
                                 end_date=str(max(df['first_online']).date()),
-                            ),
-                            dbc.Checklist(
-                                id="include-older",
-                                options=['include older'],
-                                value=['include older'],
                             ),
                         ]),
                     ],
@@ -118,7 +125,24 @@ layout = dbc.Row(
     ], className='dbc'
 )
 
-#Update Map Graph based on date-picker, selected data on histogram and location dropdown
+# Update date-picker
+@dash.callback(
+    Output("time-period", "start_date"),
+    Output("time-period", "end_date"),
+    Output("time-period", "disabled"),
+    [
+        Input("time-period-radio", "value"),
+    ],
+)
+def filter_df(radio_value):
+    if radio_value > 0:
+        last_include = df['first_online'].max() - relativedelta(months=radio_value)
+        return last_include.date(), df['first_online'].max().date(), True
+    if radio_value == 0:
+        return df['first_online'].min().date(), df['first_online'].max().date(), True
+    return df['first_online'].min().date(), df['first_online'].max().date(), False
+
+# Update Map Graph based on date-picker, selected data on histogram and location dropdown
 @dash.callback(
     Output("total-vacancies", "children"),
     Output("bar_chart", "figure"),
@@ -135,11 +159,10 @@ layout = dbc.Row(
         Input("job-type", "value"),
         Input("all-types", "value"),
         Input("time-period", "start_date"),
-        Input("time-period", "end_date"),
-        Input("include-older", "value")
+        Input("time-period", "end_date")
     ],
 )
-def filter_df(job_type, all_types, start_date, end_date, include_older):
+def filter_df(job_type, all_types, start_date, end_date):
     df_selected = df.copy()
 
     if len(job_type)  > 0:
@@ -152,11 +175,8 @@ def filter_df(job_type, all_types, start_date, end_date, include_older):
     start_date = date.fromisoformat(start_date)
     end_date = date.fromisoformat(end_date)
 
-    if len(include_older) > 0:
-        df_selected = df_selected.loc[((df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)) |
-        df_selected['first_online'].isnull()]
-    else:
-        df_selected = df_selected.loc[(df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)]
+    df_selected = df_selected.loc[
+        (df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)]
 
     fig_bar = gen_charts.generate_bar_chart(df_selected)
     fig_line = gen_charts.generate_line_chart(df_selected)
