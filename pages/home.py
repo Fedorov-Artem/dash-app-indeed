@@ -89,16 +89,18 @@ layout = dbc.Row(
                     ],
                 ),
                 html.Br(),
-                html.P(f"Last Update: {df['first_online'].max():%m.%d.%Y}"),
-                html.P("Total Vacancies: {:,d}".format(len(df))),
-                html.P(id="total-vacancies"),
-                html.P(id='exp-text')
             ], style={"padding-left" : "4px"},
         ), style = {"position": "fixed", "background-color": "#f8f9fa", "top": "4rem", "bottom":0, "width":"20rem"}
         ),
         # Column for app graphs and plots
         dbc.Col(
             children=[
+                dbc.Row([
+                    gen_charts.create_ban_card("Last Update", f"{df['first_online'].max():%m.%d.%Y}", True),
+                    gen_charts.create_ban_card("Total Vacancies: ", "{:,d}".format(len(df)), True),
+                    gen_charts.create_ban_card("Vacancies Selected: ", "total-vacancies"),
+                    gen_charts.create_ban_card("Mean required experience: ", "exp-text")
+                ], style={"text-align": "center"}),
                 dbc.Row(
                     children=[
                         dbc.Col([dcc.Graph(id="bar_chart", figure=fig_bar)], width=8),
@@ -188,10 +190,9 @@ def filter_df(job_type, all_types, start_date, end_date):
     fig_bar_companies = gen_charts.generate_bar_chart_companies(df_selected)
     fig_pie_viz = gen_charts.generate_pie_viz(df_selected)
 
-    selected_jobs_string = "Vacancies Selected: {:,d}".format(
-        len(df_selected) )
+    selected_jobs_string = "{:,d}".format( len(df_selected) )
 
-    exp_text = f"Mean required experience: {df_selected['min_experience'].mean():.2f} years"
+    exp_text = f"{df_selected['min_experience'].mean():.2f} years"
 
     return selected_jobs_string, fig_bar, fig_line, fig_pie_cloud, exp_text, fig_en, fig_he, fig_edu, fig_recr,\
            fig_bar_companies, fig_pie_viz

@@ -26,11 +26,15 @@ important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka'
                     'Programing Language', 'Python', 'Java', 'Scala', 'R']
 
 
-def create_ban_card(desc_text, ban_id):
+def create_ban_card(desc_text, value_str, is_static=False):
+    if is_static:
+        big_string = html.P(value_str, style={"font-size": 24, "line-height": "1em"})
+    else:
+        big_string = html.P(id=value_str, style={"font-size": 24, "line-height": "1em"})
     ban_card = dbc.Col([
         dbc.Card([
             html.P(desc_text),
-            html.P(id=ban_id, style={"font-size": 24, "line-height": "1em"}),
+            big_string,
         ])
     ], width=3)
     return ban_card
