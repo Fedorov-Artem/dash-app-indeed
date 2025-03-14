@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 import plotly.express as px
+from dash import html
+import dash_bootstrap_components as dbc
+
 
 df = pd.read_csv('to_analysis_indeed.csv')
 df['first_online'] = pd.to_datetime(df['first_online'])
@@ -21,6 +24,17 @@ important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka'
                     'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI', 'Natural Language Processing', 'NoSQL',
                     'Machine Learning', 'Pandas', 'PyTorch', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow',
                     'Programing Language', 'Python', 'Java', 'Scala', 'R']
+
+
+def create_ban_card(desc_text, ban_id):
+    ban_card = dbc.Col([
+        dbc.Card([
+            html.P(desc_text),
+            html.P(id=ban_id, style={"font-size": 24, "line-height": "1em"}),
+        ])
+    ], width=3)
+    return ban_card
+
 
 def generate_bar_chart(df_sel):
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
