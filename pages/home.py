@@ -96,7 +96,7 @@ layout = dbc.Row(
         dbc.Col(
             children=[
                 dbc.Row([
-                    gen_charts.create_ban_card("Last Update", f"{df['first_online'].max():%m.%d.%Y}", True),
+                    gen_charts.create_ban_card("Last Update:", f"{df['first_online'].max():%m.%d.%Y}", True),
                     gen_charts.create_ban_card("Total Vacancies: ", "{:,d}".format(len(df)), True),
                     gen_charts.create_ban_card("Vacancies Selected: ", "total-vacancies"),
                     gen_charts.create_ban_card("Mean required experience: ", "exp-text")
