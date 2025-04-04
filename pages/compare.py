@@ -131,9 +131,20 @@ layout = dbc.Row(
                                     ),
                             ]
                         ),
+                        html.Br(),
                         html.Div([
+                            dbc.Label("Select Time Period", html_for="comparison-period"),
+                            dbc.RadioItems(
+                                id="time-period-all-radio",
+                                options=[
+                                    {'label': 'All time', 'value': 0},
+                                    {'label': 'Twelve months', 'value': 12},
+                                    {'label': 'Six months', 'value': 6},
+                                    {'label': 'Custom', 'value': -1}],
+                                value=0,
+                            ),
                             dcc.DatePickerRange(
-                                id='time-period-comp',
+                                id='time-period-all',
                                 min_date_allowed=str(min(df['first_online']).date()),
                                 max_date_allowed=str(max(df['first_online']).date()),
                                 start_date=str(min(df['first_online']).date()),
@@ -189,6 +200,23 @@ layout = dbc.Row(
     ], className='dbc'
 )
 
+# Update date-picker
+@dash.callback(
+    Output("time-period-all", "start_date"),
+    Output("time-period-all", "end_date"),
+    Output("time-period-all", "disabled"),
+    [
+        Input("time-period-all-radio", "value"),
+    ],
+)
+def filter_df(radio_value):
+    if radio_value > 0:
+        last_include = df['first_online'].max() - relativedelta(months=radio_value)
+        return last_include.date(), df['first_online'].max().date(), True
+    if radio_value == 0:
+        return df['first_online'].min().date(), df['first_online'].max().date(), True
+    return df['first_online'].min().date(), df['first_online'].max().date(), False
+
 
 @dash.callback(
     Output("total-vacancies-comp", "children"),
@@ -203,8 +231,8 @@ layout = dbc.Row(
     [
         Input("job-type-comp", "value"),
         Input("all-types-comp", "value"),
-        Input("time-period-comp", "start_date"),
-        Input("time-period-comp", "end_date"),
+        Input("time-period-all", "start_date"),
+        Input("time-period-all", "end_date"),
         Input("comparison-period", "value")
     ],
 )
