@@ -19,6 +19,7 @@ server = app.server
 app.layout = dbc.Container(
     children=[
         dbc.NavbarSimple([
+            dbc.NavItem(dbc.NavLink("Comparisons", href="/compare", style = {"alignment": "left"})),
             dbc.NavItem(dbc.NavLink("About", href="/about", style = {"alignment": "right"}))
             ],
             sticky="top",
