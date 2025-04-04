@@ -139,11 +139,6 @@ layout = dbc.Row(
                                 start_date=str(min(df['first_online']).date()),
                                 end_date=str(max(df['first_online']).date()),
                             ),
-                            dbc.Checklist(
-                                id="include-older-comp",
-                                options=['include older'],
-                                value=['include older'],
-                            ),
                         ]),
                     ],
                 ),
@@ -210,11 +205,10 @@ layout = dbc.Row(
         Input("all-types-comp", "value"),
         Input("time-period-comp", "start_date"),
         Input("time-period-comp", "end_date"),
-        Input("include-older-comp", "value"),
         Input("comparison-period", "value")
     ],
 )
-def filter_df(job_type, all_types, start_date, end_date, include_older, comparison_period):
+def filter_df(job_type, all_types, start_date, end_date, comparison_period):
     df_selected = df.copy()
 
     if len(job_type)  > 0:
@@ -227,11 +221,7 @@ def filter_df(job_type, all_types, start_date, end_date, include_older, comparis
     start_date = date.fromisoformat(start_date)
     end_date = date.fromisoformat(end_date)
 
-    if len(include_older) > 0:
-        df_selected = df_selected.loc[((df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)) |
-        df_selected['first_online'].isnull()]
-    else:
-        df_selected = df_selected.loc[(df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)]
+    df_selected = df_selected.loc[(df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)]
 
     comparison_earliest = df_selected['first_online'].max() - relativedelta(months=comparison_period)
 
