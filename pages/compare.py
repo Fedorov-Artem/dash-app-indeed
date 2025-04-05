@@ -5,35 +5,15 @@ import pandas as pd
 import numpy as np
 import dash_bootstrap_components as dbc
 from datetime import date
-from pages.functions.generate_charts import df, important_skills, create_ban_card
-from pages.functions.generate_charts import job_type_compare, data_professions_compare, time_period_compare
+from pages.functions.common_elements import df, important_skills, create_ban_card
+from pages.functions.common_elements import job_type_compare, data_professions_compare, time_period_compare
 
-import plotly.express as px
 from dateutil.relativedelta import relativedelta
-import datetime
 
 from plotly import graph_objs as go
-#from plotly.tools import make_subplots
-from plotly.subplots import make_subplots
+
 
 dash.register_page(__name__, path='/compare', title='Data Jobs in Israel 2024-2025')
-
-
-def select_job_type(element_id):
-    job_type_div = html.Div(
-        children=[
-            html.Br(),
-            dbc.Label("Select Job Type", html_for=element_id),
-            # Dropdown for job type
-            dcc.Dropdown(
-                id=element_id,
-                options=df['job_type'].unique(),
-                value=[],
-                multi=True,
-            ),
-        ]
-    )
-    return job_type_div
 
 
 def bar_chart_skills(df_sel,
@@ -143,7 +123,6 @@ layout = dbc.Row(
                 html.Br(),
                 html.P(f"Last Update: {df['first_online'].max():%m.%d.%Y}"),
                 html.P("Total Vacancies: {:,d}".format(len(df))),
-                #html.P(id="total-vacancies"),
                 html.P(id='exp-text')
             ], style={"padding-left" : "4px"},
         ), style = {"position": "fixed", "background-color": "#f8f9fa", "top": "4rem", "bottom":0, "width":"20rem"}

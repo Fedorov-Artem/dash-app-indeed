@@ -6,22 +6,22 @@ import numpy as np
 import dash_bootstrap_components as dbc
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from pages.functions.generate_charts import job_type, data_professions, time_period
+from pages.functions.common_elements import job_type, data_professions, time_period
+from pages.functions.common_elements import df, create_ban_card
+from pages.functions import generate_charts as gen_charts
 
 
 #import dash_leaflet as dl
 #import dash_leaflet.express as dlx
-import plotly.express as px
+#import plotly.express as px
 import sys
+
 sys.path.append('/functions')
-from pages.functions import generate_charts as gen_charts
 
 dash.register_page(__name__, path='/', title='Data Jobs in Israel 2024-2025')
 
 pd.options.mode.chained_assignment =  None
 
-df = gen_charts.df
-all_types_options = gen_charts.all_types_options
 
 fig_bar = gen_charts.generate_bar_chart(df)
 fig_line = gen_charts.generate_line_chart(df)
@@ -55,10 +55,10 @@ layout = dbc.Row(
         dbc.Col(
             children=[
                 dbc.Row([
-                    gen_charts.create_ban_card("Last Update:", f"{df['first_online'].max():%m.%d.%Y}", True),
-                    gen_charts.create_ban_card("Total Vacancies: ", "{:,d}".format(len(df)), True),
-                    gen_charts.create_ban_card("Vacancies Selected: ", "total-vacancies"),
-                    gen_charts.create_ban_card("Mean required experience: ", "exp-text")
+                    create_ban_card("Last Update:", f"{df['first_online'].max():%m.%d.%Y}", True),
+                    create_ban_card("Total Vacancies: ", "{:,d}".format(len(df)), True),
+                    create_ban_card("Vacancies Selected: ", "total-vacancies"),
+                    create_ban_card("Mean required experience: ", "exp-text")
                 ], style={"text-align": "center"}),
                 dbc.Row(
                     children=[
