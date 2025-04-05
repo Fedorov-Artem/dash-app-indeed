@@ -3,7 +3,9 @@ import numpy as np
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
-df = pd.read_csv('../../to_analysis_indeed.csv')
+#df = pd.read_csv('../../to_analysis_indeed.csv')
+df = pd.read_csv('to_analysis_indeed.csv')
+
 df['first_online'] = pd.to_datetime(df['first_online'])
 df['last_online'] = pd.to_datetime(df['last_online'])
 df['day_diff'] = (df['last_online'] - df['first_online']).dt.days

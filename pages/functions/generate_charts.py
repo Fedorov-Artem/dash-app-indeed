@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import plotly.express as px
-from common_elements import important_skills
+from pages.functions.common_elements import important_skills
 
 
 def generate_bar_chart(df_sel):
