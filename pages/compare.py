@@ -5,7 +5,8 @@ import pandas as pd
 import numpy as np
 import dash_bootstrap_components as dbc
 from datetime import date
-from pages.functions.generate_charts import df, all_types_options, important_skills, create_ban_card
+from pages.functions.generate_charts import df, important_skills, create_ban_card
+from pages.functions.generate_charts import job_type_compare, data_professions_compare, time_period_compare
 
 import plotly.express as px
 from dateutil.relativedelta import relativedelta
@@ -16,6 +17,23 @@ from plotly import graph_objs as go
 from plotly.subplots import make_subplots
 
 dash.register_page(__name__, path='/compare', title='Data Jobs in Israel 2024-2025')
+
+
+def select_job_type(element_id):
+    job_type_div = html.Div(
+        children=[
+            html.Br(),
+            dbc.Label("Select Job Type", html_for=element_id),
+            # Dropdown for job type
+            dcc.Dropdown(
+                id=element_id,
+                options=df['job_type'].unique(),
+                value=[],
+                multi=True,
+            ),
+        ]
+    )
+    return job_type_div
 
 
 def bar_chart_skills(df_sel,
@@ -106,53 +124,12 @@ layout = dbc.Row(
         # Column for user controls
         dbc.Col(html.Div(
             children=[
-                html.Div(
-                    children=[
-                        html.Div(
-                            children=[
-                                html.Br(),
-                                dbc.Label("Select Job Type", html_for="job-type"),
-                                # Dropdown for job type
-                                dcc.Dropdown(
-                                    id="job-type-comp",
-                                    options=df['job_type'].unique(),
-                                    value=[],
-                                    multi=True,
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            children=[
-                                # Checkboxes for data professions
-                                dbc.Checklist(
-                                    id="all-types-comp",
-                                    options=all_types_options,
-                                    value=[],
-                                    ),
-                            ]
-                        ),
-                        html.Br(),
-                        html.Div([
-                            dbc.Label("Select Time Period", html_for="comparison-period"),
-                            dbc.RadioItems(
-                                id="time-period-all-radio",
-                                options=[
-                                    {'label': 'All time', 'value': 0},
-                                    {'label': 'Twelve months', 'value': 12},
-                                    {'label': 'Six months', 'value': 6},
-                                    {'label': 'Custom', 'value': -1}],
-                                value=0,
-                            ),
-                            dcc.DatePickerRange(
-                                id='time-period-all',
-                                min_date_allowed=str(min(df['first_online']).date()),
-                                max_date_allowed=str(max(df['first_online']).date()),
-                                start_date=str(min(df['first_online']).date()),
-                                end_date=str(max(df['first_online']).date()),
-                            ),
-                        ]),
-                    ],
-                ),
+                html.Div([
+                    job_type_compare,
+                    data_professions_compare,
+                    html.Br(),
+                    time_period_compare
+                ]),
                 html.Br(),
                 html.Div([
                     dbc.Label("Select Comparison Period", html_for="comparison-period"),

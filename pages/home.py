@@ -6,10 +6,8 @@ import numpy as np
 import dash_bootstrap_components as dbc
 from datetime import date
 from dateutil.relativedelta import relativedelta
+from pages.functions.generate_charts import job_type, data_professions, time_period
 
-#from plotly import graph_objs as go
-#from plotly.tools import make_subplots
-#from plotly.subplots import make_subplots
 
 #import dash_leaflet as dl
 #import dash_leaflet.express as dlx
@@ -43,49 +41,10 @@ layout = dbc.Row(
             children=[
                 html.Div(
                     children=[
-                        html.Div(
-                            children=[
-                                html.Br(),
-                                dbc.Label("Select Job Type", html_for="job-type"),
-                                # Dropdown for job type
-                                dcc.Dropdown(
-                                    id="job-type",
-                                    options=df['job_type'].unique(),
-                                    value=[],
-                                    multi=True,
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            children=[
-                                # Checkboxes for data professions
-                                dbc.Checklist(
-                                    id="all-types",
-                                    options=all_types_options,
-                                    value=[],
-                                    ),
-                            ]
-                        ),
+                        job_type,
+                        data_professions,
                         html.Br(),
-                        html.Div([
-                            dbc.Label("Select Time Period", html_for="comparison-period"),
-                            dbc.RadioItems(
-                                id="time-period-radio",
-                                options=[
-                                    {'label': 'All time', 'value': 0},
-                                    {'label': 'Six months', 'value': 6},
-                                    {'label': 'Three months', 'value': 3},
-                                    {'label': 'Custom', 'value': -1}],
-                                value=0,
-                            ),
-                            dcc.DatePickerRange(
-                                id='time-period',
-                                min_date_allowed=str(min(df['first_online']).date()),
-                                max_date_allowed=str(max(df['first_online']).date()),
-                                start_date=str(min(df['first_online']).date()),
-                                end_date=str(max(df['first_online']).date()),
-                            ),
-                        ]),
+                        time_period
                     ],
                 ),
                 html.Br(),
