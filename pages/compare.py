@@ -74,7 +74,7 @@ def bar_chart_skills(df_sel,
 def bar_chart_compare(df_sel, title, agg_column,
                       remove_nonunique=True,
                       time_period=6):
-    ''' function used to visualize multiple binary comparisons between different time periods '''
+    ''' function used to visualize multiple comparisons between different time periods '''
     def generate_bar(df_to_agg, legend, agg_column):
         df_to_agg = pd.DataFrame(df_to_agg[agg_column].value_counts()).reset_index()
         total_val = df_to_agg['count'].sum()
