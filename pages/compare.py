@@ -10,6 +10,7 @@ from pages.functions.common_elements import df, important_skills, create_ban_car
 from pages.functions.common_elements import job_type_compare, data_professions_compare, time_period_compare
 
 from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 from plotly import graph_objs as go
 
@@ -220,13 +221,14 @@ def filter_df(job_type, all_types, start_date, end_date, comparison_period):
 
     # format dates for comparison period
     comparison_earliest = df_selected['first_online'].max() - relativedelta(months=comparison_period)
-
-    days_diff_all = df_selected['first_online'].max() - df_selected['first_online'].min()
+    all_earliest = max(start_date,
+                       datetime.strptime('10-01-2024', '%d-%m-%Y').date())
+    days_diff_all = df_selected['first_online'].dt.date.max() - all_earliest
     days_diff_all = days_diff_all.days
 
     days_diff_recent = df_selected['first_online'].max() - comparison_earliest
     days_diff_recent = days_diff_recent.days
-    count_without_old = len(df_selected.loc[df_selected['first_online'].notnull()])
+    count_without_old = len(df_selected.loc[df_selected['first_online'].dt.date > all_earliest])
     count_recent = len(df_selected.loc[df_selected['first_online'] >= comparison_earliest])
 
     # strings for BANs
