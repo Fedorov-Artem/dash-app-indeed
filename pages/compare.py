@@ -17,7 +17,6 @@ from plotly import graph_objs as go
 # Define dash app page
 dash.register_page(__name__, path='/compare', title='Data Jobs in Israel 2024-2025')
 
-
 def bar_chart_skills(df_sel,
                      text_all='All Vacancies',
                      text_recent='Recent Vacancies',
@@ -156,7 +155,7 @@ layout = dbc.Row(
                 dcc.Graph(id="districts-comp")
             ], width=6),
                 dbc.Col([
-                    dcc.Graph(id="recr-comp")
+                    dcc.Graph(id="seniority-comp")
                 ], width=6),
             ])
         ], style = {"margin-left": "21rem"}),
@@ -190,7 +189,7 @@ def filter_df(radio_value):
     Output("cloud-comp", "figure"),
     Output("viz-comp", "figure"),
     Output("districts-comp", "figure"),
-    Output("recr-comp", "figure"),
+    Output("seniority-comp", "figure"),
     [
         Input("job-type-comp", "value"),
         Input("all-types-comp", "value"),
@@ -245,8 +244,7 @@ def filter_df(job_type, all_types, start_date, end_date, comparison_period):
                                  title='Visualization Skills - Comparison', agg_column='viz_tools')
     fig_distr = bar_chart_compare(df_selected, time_period=comparison_period,
                                  title='Districts - Comparison', agg_column='district', remove_nonunique=False)
-    fig_recr = bar_chart_compare(df_selected, time_period=comparison_period,
-                                 title='Direct Employers - Comparison', agg_column='is_direct', remove_nonunique=False)
-
+    fig_sen = bar_chart_compare(df_selected, time_period=comparison_period,
+                                 title='Seniority levels - Comparison', agg_column='job_type')
     return selected_jobs_string, compared_jobs_string, per_week, per_week_compared, fig_bar, fig_cloud,\
-        fig_viz, fig_distr, fig_recr
+        fig_viz, fig_distr, fig_sen
