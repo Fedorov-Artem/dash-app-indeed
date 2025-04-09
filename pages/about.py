@@ -1,10 +1,12 @@
+# This is the about page of the dash application
 import dash
 from dash import html
 import dash_bootstrap_components as dbc
 
-
+# Define dash app page
 dash.register_page(__name__, path='/about')
 
+# Page layout
 layout = dbc.Row(
     children = [
         dbc.Col(children=[],
