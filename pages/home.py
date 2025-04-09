@@ -1,28 +1,27 @@
+# This is the main page of the dash application
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
+
 import pandas as pd
 import numpy as np
-import dash_bootstrap_components as dbc
-from datetime import date
-from dateutil.relativedelta import relativedelta
+
 from pages.functions.common_elements import job_type, data_professions, time_period
 from pages.functions.common_elements import df, create_ban_card
 from pages.functions import generate_charts as gen_charts
 
-
-#import dash_leaflet as dl
-#import dash_leaflet.express as dlx
-#import plotly.express as px
 import sys
+from datetime import date
 
+from dateutil.relativedelta import relativedelta
+
+# Define dash app page
 sys.path.append('/functions')
-
 dash.register_page(__name__, path='/', title='Data Jobs in Israel 2024-2025')
-
 pd.options.mode.chained_assignment =  None
 
-
+# All default visualizations are defined using functions from generate_charts.py
 fig_bar = gen_charts.generate_bar_chart(df)
 fig_line = gen_charts.generate_line_chart(df)
 fig_pie_district = gen_charts.generate_pie_district(df)
@@ -34,19 +33,18 @@ fig_recr = gen_charts.generate_single_bar_recruter(df)
 fig_pie_viz = gen_charts.generate_pie_viz(df)
 fig_bar_companies = gen_charts.generate_bar_chart_companies(df)
 
+# Page layout
 layout = dbc.Row(
     children = [
         # Column for user controls
-        dbc.Col(html.Div(
-            children=[
-                html.Div(
-                    children=[
-                        job_type,
-                        data_professions,
-                        html.Br(),
-                        time_period
-                    ],
-                ),
+        dbc.Col(html.Div([
+            html.Div(
+                children=[
+                    job_type,
+                    data_professions,
+                    html.Br(),
+                    time_period
+                ]),
                 html.Br(),
             ], style={"padding-left" : "4px"},
         ), style = {"position": "fixed", "background-color": "#f8f9fa", "top": "4rem", "bottom":0, "width":"20rem"}
@@ -86,7 +84,6 @@ layout = dbc.Row(
     ], className='dbc'
 )
 
-# Update date-picker
 @dash.callback(
     Output("time-period", "start_date"),
     Output("time-period", "end_date"),
@@ -96,6 +93,7 @@ layout = dbc.Row(
     ],
 )
 def filter_df(radio_value):
+    ''' updates datepicker based on selected radiobutton '''
     if radio_value > 0:
         last_include = df['first_online'].max() - relativedelta(months=radio_value)
         return last_include.date(), df['first_online'].max().date(), True
@@ -103,7 +101,6 @@ def filter_df(radio_value):
         return df['first_online'].min().date(), df['first_online'].max().date(), True
     return df['first_online'].min().date(), df['first_online'].max().date(), False
 
-# Update Map Graph based on date-picker, selected data on histogram and location dropdown
 @dash.callback(
     Output("total-vacancies", "children"),
     Output("bar_chart", "figure"),
@@ -124,21 +121,27 @@ def filter_df(radio_value):
     ],
 )
 def filter_df(job_type, all_types, start_date, end_date):
+    ''' 1. filters main dataframe depending on user control values
+        2. generates visualisations using filtered dataframe '''
+
     df_selected = df.copy()
 
+    # filter by seniority level
     if len(job_type)  > 0:
         df_selected = df_selected.loc[df_selected['job_type'].isin(job_type)]
 
+    # filter by profession
     if len(all_types) > 0:
         df_selected['total'] = df_selected[all_types].sum(axis=1)
         df_selected = df_selected.loc[df_selected['total'] > 0]
 
+    # filter by publication date
     start_date = date.fromisoformat(start_date)
     end_date = date.fromisoformat(end_date)
-
     df_selected = df_selected.loc[
         (df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)]
 
+    # generate visualisations
     fig_bar = gen_charts.generate_bar_chart(df_selected)
     fig_line = gen_charts.generate_line_chart(df_selected)
     fig_pie_cloud = gen_charts.generate_pie_district(df_selected)
@@ -150,7 +153,6 @@ def filter_df(job_type, all_types, start_date, end_date):
     fig_pie_viz = gen_charts.generate_pie_viz(df_selected)
 
     selected_jobs_string = "{:,d}".format( len(df_selected) )
-
     exp_text = f"{df_selected['min_experience'].mean():.2f} years"
 
     return selected_jobs_string, fig_bar, fig_line, fig_pie_cloud, exp_text, fig_en, fig_he, fig_edu, fig_recr,\

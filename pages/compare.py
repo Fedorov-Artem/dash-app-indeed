@@ -1,3 +1,4 @@
+# This is the main page of the dash application
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
@@ -12,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 
 from plotly import graph_objs as go
 
-
+# Define dash app page
 dash.register_page(__name__, path='/compare', title='Data Jobs in Israel 2024-2025')
 
 
@@ -20,6 +21,7 @@ def bar_chart_skills(df_sel,
                      text_all='All Vacancies',
                      text_recent='Recent Vacancies',
                      time_period=6):
+    ''' bar chart to compare top 15 most commonly mentioned skills between different time periods '''
     def get_top_skills(df_sel_filtered):
         skill_count = []
         for skill in important_skills:
@@ -71,6 +73,7 @@ def bar_chart_skills(df_sel,
 def bar_chart_compare(df_sel, title, agg_column,
                       remove_nonunique=True,
                       time_period=6):
+    ''' function used to visualize multiple binary comparisons between different time periods '''
     def generate_bar(df_to_agg, legend, agg_column):
         df_to_agg = pd.DataFrame(df_to_agg[agg_column].value_counts()).reset_index()
         total_val = df_to_agg['count'].sum()
@@ -105,12 +108,14 @@ layout = dbc.Row(
         dbc.Col(html.Div(
             children=[
                 html.Div([
+                    # user controls similar to those used on main page
                     job_type_compare,
                     data_professions_compare,
                     html.Br(),
                     time_period_compare
                 ]),
                 html.Br(),
+                # select comparison period
                 html.Div([
                     dbc.Label("Select Comparison Period", html_for="comparison-period"),
                     dbc.RadioItems(
@@ -121,6 +126,7 @@ layout = dbc.Row(
                     ),
                 ]),
                 html.Br(),
+                # print some stats
                 html.P(f"Last Update: {df['first_online'].max():%m.%d.%Y}"),
                 html.P("Total Vacancies: {:,d}".format(len(df))),
                 html.P(id='exp-text')
@@ -156,7 +162,6 @@ layout = dbc.Row(
     ], className='dbc'
 )
 
-# Update date-picker
 @dash.callback(
     Output("time-period-all", "start_date"),
     Output("time-period-all", "end_date"),
@@ -166,6 +171,7 @@ layout = dbc.Row(
     ],
 )
 def filter_df(radio_value):
+    ''' updates datepicker based on selected radiobutton '''
     if radio_value > 0:
         last_include = df['first_online'].max() - relativedelta(months=radio_value)
         return last_include.date(), df['first_online'].max().date(), True
@@ -193,20 +199,26 @@ def filter_df(radio_value):
     ],
 )
 def filter_df(job_type, all_types, start_date, end_date, comparison_period):
+    ''' 1. filters main dataframe depending on user control values
+        2. generates visualisations using filtered dataframe '''
+
     df_selected = df.copy()
 
+    # filter by seniority level
     if len(job_type)  > 0:
         df_selected = df_selected.loc[df_selected['job_type'].isin(job_type)]
 
+    # filter by profession
     if len(all_types) > 0:
         df_selected['total'] = df_selected[all_types].sum(axis=1)
         df_selected = df_selected.loc[df_selected['total'] > 0]
 
+    # filter by publication date
     start_date = date.fromisoformat(start_date)
     end_date = date.fromisoformat(end_date)
-
     df_selected = df_selected.loc[(df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)]
 
+    # format dates for comparison period
     comparison_earliest = df_selected['first_online'].max() - relativedelta(months=comparison_period)
 
     days_diff_all = df_selected['first_online'].max() - df_selected['first_online'].min()
@@ -217,11 +229,13 @@ def filter_df(job_type, all_types, start_date, end_date, comparison_period):
     count_without_old = len(df_selected.loc[df_selected['first_online'].notnull()])
     count_recent = len(df_selected.loc[df_selected['first_online'] >= comparison_earliest])
 
+    # strings for BANs
     selected_jobs_string = "{:,d}".format(len(df_selected))
     compared_jobs_string = "{:,d}".format(len(df_selected.loc[df_selected['first_online'] >= comparison_earliest]))
     per_week = "{:.2f}".format(7*count_without_old/days_diff_all)
     per_week_compared = "{:.2f}".format(7*count_recent/days_diff_recent)
 
+    # plotly visualisations
     fig_bar = bar_chart_skills(df_selected, time_period=comparison_period)
     fig_cloud = bar_chart_compare(df_selected, time_period=comparison_period,
                                 title='Cloud Skills - Comparison', agg_column='cloud_skills')
