@@ -7,6 +7,7 @@ from pages.functions.common_elements import important_skills
 def generate_bar_chart(df_sel):
     '''bar chart top 15 most commonly mentioned skills'''
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
+    total_len = len(df_sel)
     skill_count = []
     for skill in important_skills:
         if skill in df_sel:
@@ -18,15 +19,24 @@ def generate_bar_chart(df_sel):
             print(skill + '!!!')
 
     df_skill = pd.DataFrame(skill_count, columns=['skill', 'count', 'mandatory'])
+    df_skill['percent_dec'] = 100*df_skill['count']/total_len
+    df_skill['percent'] = df_skill['percent_dec'].round(1).astype(str) + '%'
     df_skill['total'] = df_skill.groupby('skill')['count'].transform('sum')
     df_skill = df_skill.loc[df_skill['total'] > 0]
     df_skill = df_skill.sort_values(['total', 'skill'])[-30:]
     fig = px.bar(df_skill,
-                 x='count',
+                 x='percent_dec',
                  y='skill',
                  color='mandatory',
                  category_orders={"mandatory": ["mandatory", "advantage"],
                                   },
+                 hover_name = "skill",
+                 hover_data = {'skill': False,
+                               'percent_dec': False,
+                               'count': True,
+                               'mandatory':True,
+                               'percent': True
+                               }
                  )
     fig.update_layout(
         title='Top 15 Most Commonly Mentioned Skills',#<br>'
