@@ -43,10 +43,10 @@ def select_job_type(element_id):
     job_type_div = html.Div(
         children=[
             html.Br(),
-            dbc.Label("Select Job Type", html_for=element_id),
             # Dropdown for job type
             dcc.Dropdown(
                 id=element_id,
+                placeholder="Select Seniority Level",
                 options=df['job_type'].unique(),
                 value=[],
                 multi=True,
@@ -63,6 +63,7 @@ def select_data_professions(element_id):
     ''' checkbox list to filter jobs by profession, used on both home and compare pages '''
     data_professions_div = html.Div(
         children=[
+            html.Br(),
             # Checkboxes for data professions
             dbc.Checklist(
                 id=element_id,
