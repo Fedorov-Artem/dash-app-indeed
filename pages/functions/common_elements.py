@@ -89,6 +89,8 @@ def select_time_period(element_id_radio, element_id_datepicker, raio_dict):
         ),
         dcc.DatePickerRange(
             id=element_id_datepicker,
+            month_format='D MMM YYYY',
+            display_format='D MMM YYYY',
             min_date_allowed=str(min(df['first_online']).date()),
             max_date_allowed=str(max(df['first_online']).date()),
             start_date=str(min(df['first_online']).date()),

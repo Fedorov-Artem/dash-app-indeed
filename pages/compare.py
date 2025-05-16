@@ -127,7 +127,7 @@ layout = dbc.Row(
                 ]),
                 html.Br(),
                 # print some stats
-                html.P(f"Last Update: {df['first_online'].max():%m.%d.%Y}"),
+                html.P(f"Last Update: {df['first_online'].max():%d %b %Y}"),
                 html.P("Total Vacancies: {:,d}".format(len(df))),
                 html.P(id='exp-text')
             ], style={"padding-left" : "4px"},

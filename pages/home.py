@@ -53,7 +53,7 @@ layout = dbc.Row(
         dbc.Col(
             children=[
                 dbc.Row([
-                    create_ban_card("Last Update:", f"{df['first_online'].max():%m.%d.%Y}", True),
+                    create_ban_card("Last Update:", f"{df['first_online'].max():%d %b %Y}", True),
                     create_ban_card("Total Vacancies: ", "{:,d}".format(len(df)), True),
                     create_ban_card("Vacancies Selected: ", "total-vacancies"),
                     create_ban_card("Mean required experience: ", "exp-text")
