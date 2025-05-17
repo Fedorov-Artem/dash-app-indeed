@@ -73,6 +73,30 @@ def generate_line_chart(df_sel):
         tickformat="%b")
     return fig
 
+def generate_line_chart_m(df_sel):
+    ''' line chart new vacancies per week '''
+    df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
+    df_dates = df_sel.loc[df_sel['first_online'] > '2024-01-31']
+    df_dates['month_num'] = df_dates['first_online'].dt.strftime('%m').astype(int)
+    df_dates.loc[df_dates['first_online'].dt.year == 2025, 'month_num'] += 12
+    df_dates = df_dates.groupby('month_num').agg(
+        jobs_count = ("url", "nunique"),
+        month = ("first_online", "min")
+    )
+    df_dates['month'] = df_dates['month'].dt.strftime('%b-%Y')
+
+    fig = px.line(df_dates,
+                  x="month",
+                  y="jobs_count",
+                  )
+
+    fig.update_layout(
+        title='New Vacancies per Month',
+        yaxis_title=None,
+        xaxis_title=None
+    )
+    return fig
+
 def generate_single_bar_en(df_sel):
     ''' single bar chart counting vacancies mentioning English language '''
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
