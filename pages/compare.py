@@ -141,9 +141,10 @@ layout = dbc.Row(
                 create_ban_card("Av per week: ", "vacancies-per-week"),
                 create_ban_card("Av per week recent: ", "vacancies-per-week-compared")
             ], style = {"text-align": "center"}),
-            dbc.Row(
-                [dcc.Graph(id="bar-chart-comp")]
-            ),
+            dbc.Row([dbc.Col([
+                dcc.Graph(id="bar-chart-comp")
+                ], width=11)
+            ]),
             dbc.Row([dbc.Col([
                     dcc.Graph(id="cloud-comp")
                 ], width=6),
@@ -151,9 +152,10 @@ layout = dbc.Row(
                     dcc.Graph(id="viz-comp")
                 ], width=6),
             ]),
-            dbc.Row([dbc.Col([
-                dcc.Graph(id="districts-comp")
-            ], width=6),
+            dbc.Row([
+                dbc.Col([
+                    dcc.Graph(id="districts-comp")
+                ], width=6),
                 dbc.Col([
                     dcc.Graph(id="seniority-comp")
                 ], width=6),
