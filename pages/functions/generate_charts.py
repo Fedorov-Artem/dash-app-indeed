@@ -55,11 +55,11 @@ def generate_line_chart(df_sel):
     df_dates.loc[df_dates['first_online'].dt.year == 2025, 'week_num'] += 52
     df_dates = df_dates.groupby('week_num').agg(
         jobs_count = ("url", "nunique"),
-        month_of_last_day = ("first_online", "max")
+        last_day_of_the_week = ("first_online", "max")
     )
 
     fig = px.line(df_dates,
-                  x="month_of_last_day",
+                  x="last_day_of_the_week",
                   y="jobs_count",
                   )
 
@@ -70,7 +70,7 @@ def generate_line_chart(df_sel):
     )
     fig.update_xaxes(
         dtick="M1",
-        tickformat="%b")
+        tickformat="%Y-%m-%d")
     return fig
 
 def generate_line_chart_m(df_sel):
