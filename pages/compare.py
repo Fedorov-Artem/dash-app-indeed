@@ -1,18 +1,17 @@
-# This is the main page of the dash application
+# This is the "comparisons" page of the dash application
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
+
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
+from plotly import graph_objs as go
 import pandas as pd
 import numpy as np
 import dash_bootstrap_components as dbc
-from datetime import date
+
 from pages.functions.common_elements import df, important_skills, create_ban_card
 from pages.functions.common_elements import job_type_compare, data_professions_compare, time_period_compare
-
-from dateutil.relativedelta import relativedelta
-from datetime import datetime
-
-from plotly import graph_objs as go
 
 # Define dash app page
 dash.register_page(__name__, path='/compare', title='Data Jobs in Israel 2024-2025')

@@ -1,3 +1,4 @@
+# Functions and elements used in both home.py and compare.py
 import pandas as pd
 import numpy as np
 from dash import dcc, html

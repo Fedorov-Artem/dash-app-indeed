@@ -1,20 +1,20 @@
-# This is the main page of the dash application
+# This is the default page of the dash application
+import sys
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
+import pandas as pd
+import numpy as np
+
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
-import pandas as pd
-import numpy as np
-
 from pages.functions.common_elements import job_type, data_professions, time_period
 from pages.functions.common_elements import df, create_ban_card
 from pages.functions import generate_charts as gen_charts
 
-import sys
-from datetime import date
-
-from dateutil.relativedelta import relativedelta
 
 # Define dash app page
 sys.path.append('/functions')
