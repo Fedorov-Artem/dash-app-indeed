@@ -17,7 +17,7 @@ The dashboard visualizes key metrics for the following roles:
 
 * **Growth Trajectory:** Contrary to ongoing discourse about AI replacing jobs, the data shows no decline in the demand for data professionals. The average number of new vacancies has seen a consistent increase in recent months.
 * **The AI Imperative:** While jobs are not being replaced, the skills required are evolving. "AI" is now mentioned in approximately **30%** of all job postings, reflecting a growing expectation for data professionals to have experience with or knowledge of artificial intelligence concepts and tools.
-* **Cloud is King:** There is a clear upward trend in the number of job descriptions that mention specific cloud platforms (e.g., AWS, GCP, Azure), underscoring the shift towards cloud-native data infrastructure.
+* **Cloud is the King:** There is a clear upward trend in the number of job descriptions that mention specific cloud platforms (e.g., AWS, GCP, Azure), underscoring the shift towards cloud-native data infrastructure.
 * **Geographical Concentration:** The Israeli data job market is highly centralized. More than **75%** of all open positions are located in the Tel Aviv and Central districts, highlighting a significant geographical imbalance.
 * **Experience Gap:** The market heavily favors experienced professionals. Only about **7%** of all open positions are designated for students, recent graduates, or junior-level candidates. The average required experience is **3.2 years**.
 
