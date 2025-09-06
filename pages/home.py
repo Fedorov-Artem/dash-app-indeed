@@ -1,10 +1,9 @@
-# This is the default page of the dash application
+""" This is the main page of the dash application """
 import sys
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
 import pandas as pd
-import numpy as np
 
 import dash
 from dash import dcc, html
@@ -47,7 +46,8 @@ layout = dbc.Row(
                 ]),
                 html.Br(),
             ], style={"padding-left" : "4px"},
-        ), style = {"position": "fixed", "background-color": "#f8f9fa", "top": "4rem", "bottom":0, "width":"20rem"}
+        ), style = {"position": "fixed", "background-color": "#f8f9fa",
+                    "top": "4rem", "bottom":0, "width":"20rem"}
         ),
         # Column for app graphs and plots
         dbc.Col(
@@ -92,7 +92,7 @@ layout = dbc.Row(
         Input("time-period-radio", "value"),
     ],
 )
-def filter_df(radio_value):
+def filter_df_radio(radio_value):
     ''' updates datepicker based on selected radiobutton '''
     if radio_value > 0:
         last_include = df['first_online'].max() - relativedelta(months=radio_value)
@@ -139,21 +139,22 @@ def filter_df(job_type, all_types, start_date, end_date):
     start_date = date.fromisoformat(start_date)
     end_date = date.fromisoformat(end_date)
     df_selected = df_selected.loc[
-        (df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)]
+        (df_selected['first_online'].dt.date >= start_date) &
+        (df_selected['first_online'].dt.date <= end_date)]
 
     # generate visualisations
-    fig_bar = gen_charts.generate_bar_chart(df_selected)
-    fig_line = gen_charts.generate_line_chart(df_selected)
+    fig_bar_viz = gen_charts.generate_bar_chart(df_selected)
+    fig_line_viz = gen_charts.generate_line_chart(df_selected)
     fig_pie_cloud = gen_charts.generate_pie_district(df_selected)
-    fig_en = gen_charts.generate_single_bar_en(df_selected)
-    fig_he = gen_charts.generate_single_bar_he(df_selected)
-    fig_edu = gen_charts.generate_single_bar_degree(df_selected)
-    fig_recr = gen_charts.generate_single_bar_recruter(df_selected)
-    fig_bar_companies = gen_charts.generate_bar_chart_companies(df_selected)
+    fig_en_viz = gen_charts.generate_single_bar_en(df_selected)
+    fig_he_viz = gen_charts.generate_single_bar_he(df_selected)
+    fig_edu_viz = gen_charts.generate_single_bar_degree(df_selected)
+    fig_recr_viz = gen_charts.generate_single_bar_recruter(df_selected)
+    fig_bar_companies_viz = gen_charts.generate_bar_chart_companies(df_selected)
     fig_pie_viz = gen_charts.generate_pie_viz(df_selected)
 
     selected_jobs_string = "{:,d}".format( len(df_selected) )
     exp_text = f"{df_selected['min_experience'].mean():.2f} years"
 
-    return selected_jobs_string, fig_bar, fig_line, fig_pie_cloud, exp_text, fig_en, fig_he, fig_edu, fig_recr,\
-           fig_bar_companies, fig_pie_viz
+    return selected_jobs_string, fig_bar_viz, fig_line_viz, fig_pie_cloud, exp_text,\
+        fig_en_viz, fig_he_viz, fig_edu_viz, fig_recr_viz, fig_bar_companies_viz, fig_pie_viz
