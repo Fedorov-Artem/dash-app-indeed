@@ -1,4 +1,4 @@
-# This is the "comparisons" page of the dash application
+""" This is the "comparisons" page of the dash application """
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
@@ -7,7 +7,6 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 from plotly import graph_objs as go
 import pandas as pd
-import numpy as np
 import dash_bootstrap_components as dbc
 
 from pages.functions.common_elements import df, important_skills, create_ban_card
@@ -20,7 +19,8 @@ def bar_chart_skills(df_sel,
                      text_all='All Vacancies',
                      text_recent='Recent Vacancies',
                      time_period=6):
-    ''' bar chart to compare top 15 most commonly mentioned skills between different time periods '''
+    """ bar chart to compare top 15 most commonly mentioned skills
+     between different time periods """
     def get_top_skills(df_sel_filtered):
         skill_count = []
         for skill in important_skills:
@@ -64,7 +64,8 @@ def bar_chart_skills(df_sel,
     last_include = df_sel_filtered['first_online'].max() - relativedelta(months=time_period)
     fig = go.Figure()
     fig.add_trace(generate_bar(df_sel_filtered, top_skills, text_all))
-    fig.add_trace(generate_bar(df_sel_filtered.loc[df_sel_filtered['first_online'] >= last_include], top_skills, text_recent))
+    fig.add_trace(generate_bar(df_sel_filtered.loc[df_sel_filtered['first_online'] >= last_include],
+                               top_skills, text_recent))
     fig.update_layout(title="Top 15 Skills - Comparison")
     return fig
 
@@ -72,7 +73,7 @@ def bar_chart_skills(df_sel,
 def bar_chart_compare(df_sel, title, agg_column,
                       remove_nonunique=True,
                       time_period=6):
-    ''' function used to visualize multiple comparisons between different time periods '''
+    """ function used to visualize multiple comparisons between different time periods """
     def generate_bar(df_to_agg, legend, agg_column):
         df_to_agg = pd.DataFrame(df_to_agg[agg_column].value_counts()).reset_index()
         total_val = df_to_agg['count'].sum()
@@ -127,10 +128,11 @@ layout = dbc.Row(
                 html.Br(),
                 # print some stats
                 html.P(f"Last Update: {df['first_online'].max():%d %b %Y}"),
-                html.P("Total Vacancies: {:,d}".format(len(df))),
+                html.P(f"Total Vacancies: {len(df):,d}"),
                 html.P(id='exp-text')
             ], style={"padding-left" : "4px"},
-        ), style = {"position": "fixed", "background-color": "#f8f9fa", "top": "4rem", "bottom":0, "width":"20rem"}
+        ), style = {"position": "fixed", "background-color": "#f8f9fa",
+                    "top": "4rem", "bottom":0, "width":"20rem"}
         ),
         # Column for app graphs and plots
         dbc.Col([
@@ -171,8 +173,8 @@ layout = dbc.Row(
         Input("time-period-all-radio", "value"),
     ],
 )
-def filter_df(radio_value):
-    ''' updates datepicker based on selected radiobutton '''
+def filter_df_radio(radio_value):
+    """ updates datepicker based on selected radiobutton """
     if radio_value > 0:
         last_include = df['first_online'].max() - relativedelta(months=radio_value)
         return last_include.date(), df['first_online'].max().date(), True
@@ -200,8 +202,9 @@ def filter_df(radio_value):
     ],
 )
 def filter_df(job_type, all_types, start_date, end_date, comparison_period):
-    ''' 1. filters main dataframe depending on user control values
-        2. generates visualisations using filtered dataframe '''
+    """ 1. filters main dataframe depending on user control values
+        2. generates visualisations using filtered dataframe """
+
 
     df_selected = df.copy()
 
@@ -217,7 +220,8 @@ def filter_df(job_type, all_types, start_date, end_date, comparison_period):
     # filter by publication date
     start_date = date.fromisoformat(start_date)
     end_date = date.fromisoformat(end_date)
-    df_selected = df_selected.loc[(df_selected['first_online'].dt.date >= start_date) & (df_selected['first_online'].dt.date <= end_date)]
+    df_selected = df_selected.loc[(df_selected['first_online'].dt.date >= start_date)
+                                  & (df_selected['first_online'].dt.date <= end_date)]
 
     # format dates for comparison period
     comparison_earliest = df_selected['first_online'].max() - relativedelta(months=comparison_period)
@@ -232,20 +236,24 @@ def filter_df(job_type, all_types, start_date, end_date, comparison_period):
     count_recent = len(df_selected.loc[df_selected['first_online'] >= comparison_earliest])
 
     # strings for BANs
-    selected_jobs_string = "{:,d}".format(len(df_selected))
-    compared_jobs_string = "{:,d}".format(len(df_selected.loc[df_selected['first_online'] >= comparison_earliest]))
-    per_week = "{:.2f}".format(7*count_without_old/days_diff_all)
-    per_week_compared = "{:.2f}".format(7*count_recent/days_diff_recent)
+    selected_jobs_string = f"{len(df_selected):,d}"
+    compared_jobs_string = f"{len(df_selected.loc[df_selected['first_online'] >= comparison_earliest]):,d}"
+    per_week = f"{7*count_without_old/days_diff_all:.2f}"
+    per_week_compared = f"{7*count_recent/days_diff_recent:.2f}"
+    #per_week_compared = "{:.2f}".format(7*count_recent/days_diff_recent)
 
     # plotly visualisations
     fig_bar = bar_chart_skills(df_selected, time_period=comparison_period)
     fig_cloud = bar_chart_compare(df_selected, time_period=comparison_period,
                                 title='Cloud Skills - Comparison', agg_column='cloud_skills')
     fig_viz = bar_chart_compare(df_selected, time_period=comparison_period,
-                                 title='Visualization Skills - Comparison', agg_column='viz_tools')
+                                title='Visualization Skills - Comparison',
+                                agg_column='viz_tools')
     fig_distr = bar_chart_compare(df_selected, time_period=comparison_period,
-                                 title='Districts - Comparison', agg_column='district', remove_nonunique=False)
+                                  title='Districts - Comparison',
+                                  agg_column='district', remove_nonunique=False)
     fig_sen = bar_chart_compare(df_selected, time_period=comparison_period,
-                                 title='Seniority levels - Comparison', agg_column='job_type')
-    return selected_jobs_string, compared_jobs_string, per_week, per_week_compared, fig_bar, fig_cloud,\
-        fig_viz, fig_distr, fig_sen
+                                title='Seniority levels - Comparison',
+                                agg_column='job_type')
+    return selected_jobs_string, compared_jobs_string, per_week, per_week_compared,\
+        fig_bar, fig_cloud, fig_viz, fig_distr, fig_sen

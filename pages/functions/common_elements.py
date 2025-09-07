@@ -1,6 +1,5 @@
-# Functions and elements used in both home.py and compare.py
+""" Functions and elements used in both home.py and compare.py """
 import pandas as pd
-import numpy as np
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
@@ -26,10 +25,11 @@ important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka'
                     'Apache Hadoop',
                     'Azure', 'Big Data', 'Computer Vision', 'Data Pipelines', 'Data Modeling',
                     'Data WareHousing',
-                    'Data Visualization', 'Deep Learning', 'Docker', 'ETL', 'Financial Analysis', 'GCP',
-                    'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI', 'Natural Language Processing', 'NoSQL',
-                    'Machine Learning', 'Pandas', 'PyTorch', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow',
-                    'Programing Language', 'Python', 'Java', 'Scala', 'R']
+                    'Data Visualization', 'Deep Learning', 'Docker', 'ETL', 'Financial Analysis',
+                    'GCP', 'Kubernetes', 'Looker', 'MS Excel', 'MS Power BI',
+                    'Natural Language Processing', 'NoSQL', 'Machine Learning', 'Pandas',
+                    'PyTorch', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow', 'Programing Language',
+                    'Python', 'Java', 'Scala', 'R']
 
 # time period options for the compare page
 time_period_options_compare = [{'label': 'All time', 'value': 0},

@@ -1,12 +1,12 @@
+""" Functions used on home page """
 import pandas as pd
-import numpy as np
 import plotly.express as px
 
 from pages.functions.common_elements import important_skills
 
 
 def generate_bar_chart(df_sel):
-    '''bar chart top 15 most commonly mentioned skills'''
+    """ bar chart top 15 most commonly mentioned skills """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     total_len = len(df_sel)
     skill_count = []
@@ -41,7 +41,8 @@ def generate_bar_chart(df_sel):
                  )
     fig.update_layout(
         title='Top 15 Most Commonly Mentioned Skills',#<br>'
-              #'<sup>, blue bar for mandatory skills, red - for those marked as an advantage.</sup>',
+                #'<sup>, blue bar for mandatory skills,
+                # red - for those marked as an advantage.</sup>',
         yaxis_title=None,
         xaxis_title=None,
         showlegend=False
@@ -49,7 +50,7 @@ def generate_bar_chart(df_sel):
     return fig
 
 def generate_line_chart(df_sel):
-    ''' line chart new vacancies per week '''
+    """ line chart new vacancies per week """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_dates = df_sel.loc[df_sel['first_online'] > '2024-01-14']
     df_dates['week_num'] = df_dates['first_online'].dt.strftime('%U').astype(int)
@@ -75,7 +76,7 @@ def generate_line_chart(df_sel):
     return fig
 
 def generate_line_chart_m(df_sel):
-    ''' line chart new vacancies per week '''
+    """ line chart new vacancies per week """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_dates = df_sel.loc[df_sel['first_online'] > '2024-01-31']
     df_dates['month_num'] = df_dates['first_online'].dt.strftime('%m').astype(int)
@@ -99,7 +100,7 @@ def generate_line_chart_m(df_sel):
     return fig
 
 def generate_single_bar_en(df_sel):
-    ''' single bar chart counting vacancies mentioning English language '''
+    """ single bar chart counting vacancies mentioning English language """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel['English'] = 0
     df_sel.loc[df_sel['languages'].str.contains('English', na=False), 'English'] = 1
@@ -121,7 +122,7 @@ def generate_single_bar_en(df_sel):
     return fig
 
 def generate_single_bar_he(df_sel):
-    ''' single bar chart counting vacancies mentioning Hebrew language '''
+    """ single bar chart counting vacancies mentioning Hebrew language """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel['Hebrew'] = 0
     df_sel.loc[df_sel['languages'].str.contains('Hebrew', na=False), 'Hebrew'] = 1
@@ -143,7 +144,7 @@ def generate_single_bar_he(df_sel):
     return fig
 
 def generate_single_bar_degree(df_sel):
-    ''' single bar chart counting vacancies mentioning a degree '''
+    """ single bar chart counting vacancies mentioning a degree """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel['edu'] = 'No Degree Requirements'
     df_sel.loc[df_sel['education'].str.contains('Ph.D.', na=False), 'edu'] = 'Ph.D.'
@@ -168,7 +169,7 @@ def generate_single_bar_degree(df_sel):
     return fig
 
 def generate_single_bar_recruter(df_sel):
-    ''' single bar chart counting vacancies of recruiter companies '''
+    """ single bar chart counting vacancies of recruiter companies """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel['recr'] = 'Recruiter Company'
     df_sel.loc[df_sel['is_direct'] == 1, 'recr'] = 'Direct Employer'
@@ -189,7 +190,7 @@ def generate_single_bar_recruter(df_sel):
     return fig
 
 def generate_pie_cloud(df_sel):
-    ''' pie chart for cloud skills '''
+    """ pie chart for cloud skills """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_pie = df_sel.groupby('cloud_skills', as_index=False).agg(jobs_count = ("url", "nunique"))
     fig = px.pie(df_pie,
@@ -202,7 +203,7 @@ def generate_pie_cloud(df_sel):
     return fig
 
 def generate_pie_viz(df_sel):
-    ''' pie chart for visualization skills '''
+    """ pie chart for visualization skills """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_pie = df_sel.groupby('viz_tools', as_index=False).agg(jobs_count = ("url", "nunique"))
     fig = px.pie(df_pie,
@@ -215,7 +216,7 @@ def generate_pie_viz(df_sel):
     return fig
 
 def generate_pie_district(df_sel):
-    ''' pie chart for job locations by district '''
+    """ pie chart for job locations by district """
     df_pie = df_sel.groupby('district', as_index=False).agg(jobs_count = ("url", "nunique"))
     fig = px.pie(df_pie,
                  values='jobs_count',
@@ -227,7 +228,7 @@ def generate_pie_district(df_sel):
     return fig
 
 def generate_bar_chart_companies(df_sel):
-    ''' bar chart for largest employer companies '''
+    """ bar chart for largest employer companies """
     df_sel = df_sel.loc[df_sel['is_unique_text'] > 0]
     df_sel = df_sel.loc[df_sel['is_direct'] > 0]
     df_emp = df_sel['company'].value_counts()[:15].reset_index().sort_values('count')
