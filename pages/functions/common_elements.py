@@ -22,13 +22,13 @@ all_types_options = [{"label": "Data Science Jobs", "value": "type_ds"},
 
 # list of important skills that may appear on the list of top 15 most commonly mentioned skills
 important_skills = ['A/B Testing', 'AI', 'AWS', 'Apache Airflow', 'Apache Kafka', 'Apache Spark',
-                    'Apache Hadoop', 'Azure', 'Big Data', 'Cloud', 'Computer Vision', 'Data Analysis',
-                    'Data Pipelines', 'Data Modeling', 'Data Science', 'Data WareHousing',
+                    'Apache Hadoop', 'Azure', 'Big Data', 'Cloud', 'Computer Vision',
+                    'Data Pipelines', 'Data Modeling', 'Data WareHousing',
                     'Data Visualization', 'Deep Learning', 'Docker',
                     'ETL', 'Financial Analysis', 'GCP', 'Generative AI', 'Kubernetes', 'Looker',
                     'Large Language Models', 'MS Excel', 'MS Power BI', 'Natural Language Processing',
                     'NoSQL', 'Machine Learning', 'Pandas',
-                    'PyTorch', 'Qlik', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow',
+                    'PyTorch', 'Snowflake', 'SQL', 'Tableau', 'TensorFlow',
                     'Programing Language', 'Python', 'Java', 'Scala', 'R']
 
 # time period options for the compare page
