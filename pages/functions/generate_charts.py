@@ -55,6 +55,7 @@ def generate_line_chart(df_sel):
     df_dates = df_sel.loc[df_sel['first_online'] > '2024-01-14']
     df_dates['week_num'] = df_dates['first_online'].dt.strftime('%U').astype(int)
     df_dates.loc[df_dates['first_online'].dt.year == 2025, 'week_num'] += 52
+    df_dates.loc[df_dates['first_online'].dt.year == 2026, 'week_num'] += 104
     df_dates = df_dates.groupby('week_num').agg(
         jobs_count = ("url", "nunique"),
         last_day_of_the_week = ("first_online", "max")
@@ -81,6 +82,7 @@ def generate_line_chart_m(df_sel):
     df_dates = df_sel.loc[df_sel['first_online'] > '2024-01-31']
     df_dates['month_num'] = df_dates['first_online'].dt.strftime('%m').astype(int)
     df_dates.loc[df_dates['first_online'].dt.year == 2025, 'month_num'] += 12
+    df_dates.loc[df_dates['first_online'].dt.year == 2025, 'month_num'] += 24
     df_dates = df_dates.groupby('month_num').agg(
         jobs_count = ("url", "nunique"),
         month = ("first_online", "min")
